@@ -33,9 +33,9 @@ public class ModelEntityMapperImpl implements ModelEntityMapper {
         Appointment appointment = new Appointment();
         appointment.setAppointmentId(appointmentEntity.getAppointmentId());
         appointment.setAppointmentDate(appointmentEntity.getAppointmentDate());
-        appointment.setDoctorName(appointmentEntity.getDoctor().getDoctorName());
-        appointment.setPatientName(appointmentEntity.getPatient().getPatientName());
-        appointment.setTreatmentName(appointmentEntity.getTreatment().getTreatmentName());
+        appointment.setDoctorId(appointmentEntity.getDoctor().getDoctorId());
+        appointment.setPatientId(appointmentEntity.getPatient().getPatientId());
+        appointment.setTreatmentId(appointmentEntity.getTreatment().getTreatmentId());
         return appointment;
     }
 

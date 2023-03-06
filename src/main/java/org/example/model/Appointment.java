@@ -2,27 +2,25 @@ package org.example.model;
 
 import lombok.Getter;
 import lombok.Setter;
-
+import org.apache.commons.lang3.Validate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
 public class Appointment {
-    private int appointmentId;
+    private final int appointmentId;                             // declared final because it's unique non-changable identifier
+
     private LocalDateTime appointmentDate;
-    private String doctorName;
-    private String patientName;
-    private String treatmentName;
+    private final int doctorId;                                  // declared final because it's unique non-changable identifier
+    private final int patientId;                                 // declared final because it's unique non-changable identifier
+    private List<Treatment> treatments;
 
-    public Appointment() {
-    }
-
-    public Appointment(int appointmentId, LocalDateTime appointmentDate, String doctorName, String patientName, String treatmentName) {
-        this.appointmentId = appointmentId;
-        this.appointmentDate = appointmentDate;
-        this.doctorName = doctorName;
-        this.patientName = patientName;
-        this.treatmentName = treatmentName;
+    public Appointment(int appointmentId, int doctorId, int patientId, List<Treatment> treatments) {
+        this.appointmentId = Validate.notNull(appointmentId);
+        this.doctorId = Validate.notNull(doctorId);
+        this.patientId = Validate.notNull(patientId);
+        this.treatments = Validate.notNull(treatments);
     }
 
 }

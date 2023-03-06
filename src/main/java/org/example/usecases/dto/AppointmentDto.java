@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public class AppointmentDto {
 
     @JsonProperty("id")
-    private int appointmentId;
+    private String appointmentId;
 
     @JsonProperty("datetime")
     private LocalDateTime appointmentDate;

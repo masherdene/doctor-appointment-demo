@@ -12,10 +12,13 @@ import java.util.stream.Collectors;
 @Service
 public class ModelEntityService {
 
-    @Autowired
     AppointmentRepository appointmentRepository;
 
     ModelEntityMapperImpl modelEntityMapper;
+    @Autowired
+    public ModelEntityService(AppointmentRepository appointmentRepository) {
+        this.appointmentRepository = appointmentRepository;
+    }
 
     @Transactional
     public List<Appointment> getAllAppointments() {
@@ -40,7 +43,7 @@ public class ModelEntityService {
 
     @Transactional
     public void delete(int appointmentId){
-        this.appointmentRepository.deleteById(Long.valueOf(appointmentId));
+        this.appointmentRepository.deleteById(appointmentId);
     }
 
 }
