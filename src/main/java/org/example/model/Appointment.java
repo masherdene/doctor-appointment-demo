@@ -15,14 +15,13 @@ public class Appointment {
     private final String doctorId;                                  // declared final because it's unique non-changable identifier
     private final String patientId;                                 // declared final because it's unique non-changable identifier
 
-//    private List<Integer> treatmentIds;
-    private List<Treatment> treatments;
+    private List<String> treatmentIds;
 
-    public Appointment(String appointmentId, String doctorId, String patientId, List<Treatment> treatments) {
+    public Appointment(String appointmentId, String doctorId, String patientId, List<String> treatmentIds) {
         this.appointmentId = Validate.notBlank(appointmentId);
         this.doctorId = Validate.notBlank(doctorId);
         this.patientId = Validate.notBlank(patientId);
-        this.treatments = Validate.notNull(treatments);
+        this.treatmentIds = Validate.notNull(treatmentIds);
     }
 
 }

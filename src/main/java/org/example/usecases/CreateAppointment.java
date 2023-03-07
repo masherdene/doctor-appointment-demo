@@ -23,9 +23,9 @@ public class CreateAppointment {
 
     public CreateAppointment(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, TreatmentRepository treatmentRepository){
         this.appointmentRepository = Validate.notNull(appointmentRepository);
-        this.doctorRepository = doctorRepository;
-        this.patientRepository = patientRepository;
-        this.treatmentRepository = treatmentRepository;
+        this.doctorRepository = Validate.notNull(doctorRepository);
+        this.patientRepository = Validate.notNull(patientRepository);
+        this.treatmentRepository = Validate.notNull(treatmentRepository);
     }
 
     public String execute(String doctorId, String patientId, List<String> treatmentIds) throws Exception {
@@ -38,7 +38,7 @@ public class CreateAppointment {
                 throw new Exception();
             }
             String appointmentId = UUID.randomUUID().toString();
-            Appointment appointment = new Appointment(appointmentId, doctorId, patientId, treatments);
+            Appointment appointment = new Appointment(appointmentId, doctorId, patientId, treatmentIds);
             appointmentRepository.addAppointment(appointment);
             return appointment.getAppointmentId();
         }
