@@ -9,17 +9,19 @@ import java.util.List;
 @Getter
 @Setter
 public class Appointment {
-    private final int appointmentId;                             // declared final because it's unique non-changable identifier
+    private final String appointmentId;                             // declared final because it's unique non-changable identifier
 
     private LocalDateTime appointmentDate;
-    private final int doctorId;                                  // declared final because it's unique non-changable identifier
-    private final int patientId;                                 // declared final because it's unique non-changable identifier
+    private final String doctorId;                                  // declared final because it's unique non-changable identifier
+    private final String patientId;                                 // declared final because it's unique non-changable identifier
+
+//    private List<Integer> treatmentIds;
     private List<Treatment> treatments;
 
-    public Appointment(int appointmentId, int doctorId, int patientId, List<Treatment> treatments) {
-        this.appointmentId = Validate.notNull(appointmentId);
-        this.doctorId = Validate.notNull(doctorId);
-        this.patientId = Validate.notNull(patientId);
+    public Appointment(String appointmentId, String doctorId, String patientId, List<Treatment> treatments) {
+        this.appointmentId = Validate.notBlank(appointmentId);
+        this.doctorId = Validate.notBlank(doctorId);
+        this.patientId = Validate.notBlank(patientId);
         this.treatments = Validate.notNull(treatments);
     }
 
