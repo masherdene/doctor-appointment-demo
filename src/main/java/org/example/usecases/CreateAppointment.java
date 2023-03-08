@@ -28,22 +28,22 @@ public class CreateAppointment {
         this.treatmentRepository = Validate.notNull(treatmentRepository);
     }
 
-    public String execute(String doctorId, String patientId, List<String> treatmentIds) throws Exception {
+    public String execute(String doctorId, String patientId, List<String> treatmentIds) throws RuntimeException {
         try {
-            Doctor doctor = doctorRepository.findDoctorById(doctorId);
-            Patient patient = patientRepository.findPatientById(patientId);
-            List<Treatment> treatments = treatmentRepository.findTreatmentsByIds(treatmentIds);
-            if (ObjectUtils.anyNull(doctor,patient,treatments))
+            Doctor doctor = doctorRepository.findDoctorById(Validate.notBlank(doctorId));
+            Patient patient = patientRepository.findPatientById(Validate.notBlank(patientId));
+            List<Treatment> treatments = treatmentRepository.findTreatmentsByIds(Validate.notNull(treatmentIds));
+            if (ObjectUtils.anyNull(doctor,patient) || ObjectUtils.anyNull(treatments))
             {
-                throw new Exception();
+                throw new RuntimeException();
             }
             String appointmentId = UUID.randomUUID().toString();
             Appointment appointment = new Appointment(appointmentId, doctorId, patientId, treatmentIds);
             appointmentRepository.addAppointment(appointment);
             return appointment.getAppointmentId();
         }
-        catch (Exception e){
-            return "Error";
+        catch (RuntimeException e){
+            throw new RuntimeException();
         }
     }
 }

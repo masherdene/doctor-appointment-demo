@@ -21,8 +21,8 @@ public class DoctorRepositoryImpl implements DoctorRepository {
     }
 
     @Override
-    public void addDoctor(Doctor appointment){
-        this.doctorDb.put(appointment.getDoctorId(),appointment);
+    public void addDoctor(Doctor doctor){
+        this.doctorDb.put(doctor.getDoctorId(),doctor);
     }
 
     @Override
