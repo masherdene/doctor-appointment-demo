@@ -126,7 +126,7 @@ public class CreateAppointmentTest {
 
         try(MockedConstruction<Appointment> appointmentMock = Mockito.mockConstruction(Appointment.class,(mock,context) -> {
             when(mock.getAppointmentId()).thenReturn("1003");
-            //       Appointment appointment = appointmentMock.constructed().get(0);
+//            Appointment appointment = appointmentMock.constructed().get(0);
         })){
             when(createAppointment.execute("doctorid","patientid",TREATMENTIDS)).thenReturn("1003");
             assertEquals("1003",createAppointment.execute("doctorid","patientid",TREATMENTIDS));
