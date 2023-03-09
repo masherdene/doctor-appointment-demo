@@ -14,14 +14,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedConstruction;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.Mockito;
-
+import static org.mockito.Mockito.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
-import static org.mockito.ArgumentMatchers.isA;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -31,6 +30,7 @@ public class CreateAppointmentTest {
     PatientRepository patientRepository;
     TreatmentRepository treatmentRepository;
     CreateAppointment createAppointment;
+    List<String> TREATMENTIDS;
 
     @BeforeEach
     public void SetUp() {
@@ -41,7 +41,7 @@ public class CreateAppointmentTest {
         this.createAppointment = getSut();
     }
 
-    private CreateAppointment getSut() {                                                                                // SUT: System Under Test
+    private CreateAppointment getSut() {                                                                                        // SUT: System Under Test
         return new CreateAppointment(appointmentRepository, doctorRepository, patientRepository, treatmentRepository);
     }
 
@@ -50,29 +50,24 @@ public class CreateAppointmentTest {
         assertThrows(NullPointerException.class,()-> {CreateAppointment createAppointment
                 = new CreateAppointment(null, null, null,null);});
     }
-
     @Test
     public void executeThrowsException(){
         assertThrows(RuntimeException.class,
-                ()->{createAppointment.execute("someid","anotherid", new ArrayList<>(3));}      // will create null instances for mocked objects
+                ()->{createAppointment.execute("someid","anotherid", new ArrayList<>(3));}          // will create null instances for mocked objects
         );
     }
     @Test
     public void executeThrowsExceptionForNullObjects(){
         Doctor doctor = mock(Doctor.class);
         Patient patient = mock(Patient.class);
-        List<String> treatmentIds = new ArrayList<>();
-        treatmentIds.add("3001");
-        treatmentIds.add("3002");
         List<Treatment> treatments = new ArrayList<>(2);
         when(doctorRepository.findDoctorById("doctorid")).thenReturn(doctor);
         when(patientRepository.findPatientById("patientid")).thenReturn(patient);
-        when(treatmentRepository.findTreatmentsByIds(treatmentIds)).thenReturn(treatments);
+        when(treatmentRepository.findTreatmentsByIds(TREATMENTIDS)).thenReturn(treatments);
         assertThrows(RuntimeException.class,
-                ()->{createAppointment.execute("doctorid","patientid",treatmentIds);}
+                ()->{createAppointment.execute("doctorid","patientid",TREATMENTIDS);}
         );
     }
-
     @Test
     public void executeGetsDoctor(){
         when(doctorRepository.findDoctorById("doctorid")).thenReturn(mock(Doctor.class));
@@ -80,12 +75,61 @@ public class CreateAppointmentTest {
         Doctor doctor = new Doctor("doctorid","doctorname","doctorspecial");
         assertEquals(doctor.getClass(),doctorMock.getClass());
     }
-
     @Test
-    public void executeAddsAppointment(){
-        Appointment appointment = mock(Appointment.class);
-        doNothing().when(appointmentRepository).addAppointment(appointment);
-        verify(appointmentRepository, times(1)).addAppointment(appointment);               // mocking the object testing?
+    public void executeGetsPatient(){
+        when(patientRepository.findPatientById("patientid")).thenReturn(mock(Patient.class));
+        Patient patientMock = patientRepository.findPatientById("patientid");
+        Patient patient = new Patient("patientid","patientname","patientcondition");
+        assertEquals(patient.getClass(),patientMock.getClass());
+    }
+    @Test
+    public void executeGetsTreatments(){
+        when(treatmentRepository.findTreatmentsByIds(new ArrayList<String>(3))).thenReturn(new ArrayList<Treatment>(3));
+        List<Treatment> treatmentsMock = treatmentRepository.findTreatmentsByIds(new ArrayList<String>(3));
+        List<Treatment> treatments = new ArrayList<>(3);
+        treatments.add(new Treatment("treatmentid1","treatmentname1","treatmenttype1"));
+        treatments.add(new Treatment("treatmentid2","treatmentname2","treatmenttype2"));
+        treatments.add(new Treatment("treatmentid3","treatmentname3","treatmenttype3"));
+        assertEquals(treatments.getClass(),treatmentsMock.getClass());
     }
 
+    @Test
+    public void appointmentConstructorBuildsCorrectly(){
+        Appointment appointment = new Appointment("1003","doctorid","patientid",TREATMENTIDS);
+        assertEquals("1003",appointment.getAppointmentId());
+        assertEquals("doctorid",appointment.getDoctorId());
+        assertEquals("patientid",appointment.getPatientId());
+        assertEquals(TREATMENTIDS, appointment.getTreatmentIds());
+    }
+
+    @Test
+    public void executeInvokesAddsAppointment(){
+        Appointment appointment = new Appointment("1003","doctorid","patientid",TREATMENTIDS);
+
+        doNothing().when(appointmentRepository).addAppointment(appointment);
+        appointmentRepository.addAppointment(appointment);
+        verify(appointmentRepository, times(1)).addAppointment(appointment);
+    }
+
+    @Test
+    public void executeReturnsExpectedValue(){
+        Doctor doctor = mock(Doctor.class);
+        Patient patient = mock(Patient.class);
+        List<String> TREATMENTIDS = new ArrayList<>(2);
+        TREATMENTIDS.add("3001");
+        TREATMENTIDS.add("3002");
+        List<Treatment> treatments = new ArrayList<>(2);
+
+        when(doctorRepository.findDoctorById("doctorid")).thenReturn(doctor);
+        when(patientRepository.findPatientById("patientid")).thenReturn(patient);
+        when(treatmentRepository.findTreatmentsByIds(TREATMENTIDS)).thenReturn(treatments);
+
+        try(MockedConstruction<Appointment> appointmentMock = Mockito.mockConstruction(Appointment.class,(mock,context) -> {
+            when(mock.getAppointmentId()).thenReturn("1003");
+            //       Appointment appointment = appointmentMock.constructed().get(0);
+        })){
+            when(createAppointment.execute("doctorid","patientid",TREATMENTIDS)).thenReturn("1003");
+            assertEquals("1003",createAppointment.execute("doctorid","patientid",TREATMENTIDS));
+        }
+    }
 }

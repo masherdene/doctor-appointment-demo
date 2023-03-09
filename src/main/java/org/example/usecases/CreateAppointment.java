@@ -13,7 +13,6 @@ import org.example.repository.TreatmentRepository;
 import java.util.List;
 import java.util.UUID;
 
-// use cases as beans?
 public class CreateAppointment {
 
     private AppointmentRepository appointmentRepository;
@@ -30,13 +29,7 @@ public class CreateAppointment {
 
     public String execute(String doctorId, String patientId, List<String> treatmentIds) throws RuntimeException {
         try {
-            Doctor doctor = doctorRepository.findDoctorById(Validate.notBlank(doctorId));
-            Patient patient = patientRepository.findPatientById(Validate.notBlank(patientId));
-            List<Treatment> treatments = treatmentRepository.findTreatmentsByIds(Validate.notNull(treatmentIds));
-            if (ObjectUtils.anyNull(doctor,patient) || ObjectUtils.anyNull(treatments))
-            {
-                throw new RuntimeException();
-            }
+            existsCheck(doctorId,patientId,treatmentIds);
             String appointmentId = UUID.randomUUID().toString();
             Appointment appointment = new Appointment(appointmentId, doctorId, patientId, treatmentIds);
             appointmentRepository.addAppointment(appointment);
@@ -46,4 +39,15 @@ public class CreateAppointment {
             throw new RuntimeException();
         }
     }
+
+    private void existsCheck(String doctorId, String patientId, List<String> treatmentIds){
+        Doctor doctor = doctorRepository.findDoctorById(Validate.notBlank(doctorId));
+        Patient patient = patientRepository.findPatientById(Validate.notBlank(patientId));
+        List<Treatment> treatments = treatmentRepository.findTreatmentsByIds(Validate.notNull(treatmentIds));
+        if (ObjectUtils.anyNull(doctor,patient) || ObjectUtils.anyNull(treatments))
+        {
+            throw new RuntimeException();
+        }
+    }
+
 }
