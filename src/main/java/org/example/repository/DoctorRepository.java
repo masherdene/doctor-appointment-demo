@@ -7,6 +7,7 @@ import java.util.List;
 public interface DoctorRepository {
 
     Doctor findDoctorById(String doctorId);
+    Doctor findDoctorByName(String doctorName);
     List<Doctor> findAllDoctors();
     void deleteDoctorById(String doctorId);
     void addDoctor(Doctor doctor);

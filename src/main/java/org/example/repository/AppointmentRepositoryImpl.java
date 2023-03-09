@@ -1,11 +1,14 @@
 package org.example.repository;
 
 import org.example.model.Appointment;
+import org.springframework.stereotype.Repository;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//@Repository
 public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     private final Map<String, Appointment> appointmentDb = new HashMap<>();

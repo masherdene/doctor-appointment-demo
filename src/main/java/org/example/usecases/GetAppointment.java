@@ -7,7 +7,6 @@ import org.example.repository.DoctorRepository;
 import org.example.repository.PatientRepository;
 import org.example.repository.TreatmentRepository;
 
-// use cases as beans?
 public class GetAppointment {
 
     private AppointmentRepository appointmentRepository;

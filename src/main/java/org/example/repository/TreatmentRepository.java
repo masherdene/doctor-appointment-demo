@@ -7,6 +7,7 @@ import java.util.List;
 public interface TreatmentRepository {
 
     Treatment findTreatmentById(String treatmentId);
+    Treatment findTreatmentByName(String treatmentName);
     List<Treatment> findAllTreatments();
     List<Treatment> findTreatmentsByIds(List<String> treatmentIds);
     void deleteTreatmentById(String treatmentId);

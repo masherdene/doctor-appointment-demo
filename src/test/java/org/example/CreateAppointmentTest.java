@@ -42,13 +42,13 @@ public class CreateAppointmentTest {
     }
 
     private CreateAppointment getSut() {                                                                                        // SUT: System Under Test
-        return new CreateAppointment(appointmentRepository, doctorRepository, patientRepository, treatmentRepository);
+        return new CreateAppointment(appointmentRepository, doctorRepository, treatmentRepository);
     }
 
     @Test
     public void constructorThrowsExceptionForNullArgs() {
         assertThrows(NullPointerException.class,()-> {CreateAppointment createAppointment
-                = new CreateAppointment(null, null, null,null);});
+                = new CreateAppointment(null, null, null);});
     }
     @Test
     public void executeThrowsException(){
@@ -126,8 +126,8 @@ public class CreateAppointmentTest {
 
         try(MockedConstruction<Appointment> appointmentMock = Mockito.mockConstruction(Appointment.class,(mock,context) -> {
             when(mock.getAppointmentId()).thenReturn("1003");
-//            Appointment appointment = appointmentMock.constructed().get(0);
         })){
+//                        Appointment appointment = appointmentMock.constructed().get(0);
             when(createAppointment.execute("doctorid","patientid",TREATMENTIDS)).thenReturn("1003");
             assertEquals("1003",createAppointment.execute("doctorid","patientid",TREATMENTIDS));
         }

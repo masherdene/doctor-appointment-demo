@@ -20,10 +20,9 @@ public class CreateAppointment {
     private PatientRepository patientRepository;
     private TreatmentRepository treatmentRepository;
 
-    public CreateAppointment(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, TreatmentRepository treatmentRepository){
+    public CreateAppointment(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, TreatmentRepository treatmentRepository){
         this.appointmentRepository = Validate.notNull(appointmentRepository);
         this.doctorRepository = Validate.notNull(doctorRepository);
-        this.patientRepository = Validate.notNull(patientRepository);
         this.treatmentRepository = Validate.notNull(treatmentRepository);
     }
 
@@ -42,9 +41,8 @@ public class CreateAppointment {
 
     private void existsCheck(String doctorId, String patientId, List<String> treatmentIds){
         Doctor doctor = doctorRepository.findDoctorById(Validate.notBlank(doctorId));
-        Patient patient = patientRepository.findPatientById(Validate.notBlank(patientId));
-        List<Treatment> treatments = treatmentRepository.findTreatmentsByIds(Validate.notNull(treatmentIds));
-        if (ObjectUtils.anyNull(doctor,patient) || ObjectUtils.anyNull(treatments))
+          List<Treatment> treatments = treatmentRepository.findTreatmentsByIds(Validate.notNull(treatmentIds));
+        if (ObjectUtils.anyNull(doctor) || ObjectUtils.anyNull(treatments))
         {
             throw new RuntimeException();
         }

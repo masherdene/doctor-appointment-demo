@@ -1,11 +1,13 @@
 package org.example.repository;
 
 import org.example.model.Treatment;
+import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//@Repository
 public class TreatmentRepositoryImpl implements TreatmentRepository {
 
     private final Map<String, Treatment> treatmentDb = new HashMap<>();
@@ -13,6 +15,11 @@ public class TreatmentRepositoryImpl implements TreatmentRepository {
     @Override
     public Treatment findTreatmentById(String treatmentId){
         return treatmentDb.get(treatmentId);
+    }
+
+    @Override
+    public Treatment findTreatmentByName(String treatmentName){
+        return treatmentDb.get(treatmentName);
     }
 
     @Override
