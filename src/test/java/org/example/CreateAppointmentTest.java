@@ -131,7 +131,7 @@ public class CreateAppointmentTest {
             when(mock.getAppointmentId()).thenReturn("1003");
         })){
 //                        Appointment appointment = appointmentMock.constructed().get(0);
-            when(createAppointment.execute("doctorid","patientid",TREATMENTIDS)).thenReturn("1003");
+            when(createAppointment.execute("doctorid","patientid",TREATMENTIDS)).thenReturn(new ArrayList<String>());
             assertEquals("1003",createAppointment.execute("doctorid","patientid",TREATMENTIDS));
         }
     }

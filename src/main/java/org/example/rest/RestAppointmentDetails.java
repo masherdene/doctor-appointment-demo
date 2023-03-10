@@ -17,5 +17,5 @@ public class RestAppointmentDetails {
     private List<String> treatmentIds;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime dateTime;
+    private LocalDateTime appointmentDateTime;
 }
