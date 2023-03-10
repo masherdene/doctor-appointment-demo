@@ -10,6 +10,7 @@ import org.example.repository.PatientRepository;
 import org.example.repository.TreatmentRepository;
 import org.example.usecases.CreateAppointment;
 
+import org.example.usecases.exception.UseCaseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,21 +40,26 @@ public class CreateAppointmentTest {
         this.patientRepository = Mockito.mock(PatientRepository.class);
         this.treatmentRepository = Mockito.mock(TreatmentRepository.class);
         this.createAppointment = getSut();
+
+        List<String> TREATMENTIDS = new ArrayList<>(2);
+        TREATMENTIDS.add("3001");
+        TREATMENTIDS.add("3002");
     }
 
     private CreateAppointment getSut() {                                                                                        // SUT: System Under Test
-        return new CreateAppointment(appointmentRepository, doctorRepository, treatmentRepository);
+        return new CreateAppointment(appointmentRepository, doctorRepository, patientRepository, treatmentRepository);
     }
 
     @Test
     public void constructorThrowsExceptionForNullArgs() {
         assertThrows(NullPointerException.class,()-> {CreateAppointment createAppointment
-                = new CreateAppointment(null, null, null);});
+                = new CreateAppointment(null, null, null, null);});
     }
     @Test
     public void executeThrowsException(){
-        assertThrows(RuntimeException.class,
-                ()->{createAppointment.execute("someid","anotherid", new ArrayList<>(3));}          // will create null instances for mocked objects
+
+        assertThrows(UseCaseException.class,
+                ()->{createAppointment.execute("someid","patientid", new ArrayList<>(3));}          // will create null instances for mocked objects
         );
     }
     @Test
@@ -64,7 +70,7 @@ public class CreateAppointmentTest {
         when(doctorRepository.findDoctorById("doctorid")).thenReturn(doctor);
         when(patientRepository.findPatientById("patientid")).thenReturn(patient);
         when(treatmentRepository.findTreatmentsByIds(TREATMENTIDS)).thenReturn(treatments);
-        assertThrows(RuntimeException.class,
+        assertThrows(UseCaseException.class,
                 ()->{createAppointment.execute("doctorid","patientid",TREATMENTIDS);}
         );
     }
@@ -112,12 +118,9 @@ public class CreateAppointmentTest {
     }
 
     @Test
-    public void executeReturnsExpectedValue(){
+    public void executeReturnsExpectedValue() throws UseCaseException {
         Doctor doctor = mock(Doctor.class);
         Patient patient = mock(Patient.class);
-        List<String> TREATMENTIDS = new ArrayList<>(2);
-        TREATMENTIDS.add("3001");
-        TREATMENTIDS.add("3002");
         List<Treatment> treatments = new ArrayList<>(2);
 
         when(doctorRepository.findDoctorById("doctorid")).thenReturn(doctor);

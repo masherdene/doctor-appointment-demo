@@ -7,7 +7,6 @@ import org.apache.commons.lang3.Validate;
 @Getter
 @Setter
 public class Doctor {
-
     private final String doctorId;
     private String doctorName;
     private String doctorSpecialization;

@@ -10,6 +10,8 @@ import org.example.repository.AppointmentRepository;
 import org.example.repository.DoctorRepository;
 import org.example.repository.PatientRepository;
 import org.example.repository.TreatmentRepository;
+import org.example.usecases.exception.UseCaseException;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -20,31 +22,32 @@ public class CreateAppointment {
     private PatientRepository patientRepository;
     private TreatmentRepository treatmentRepository;
 
-    public CreateAppointment(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, TreatmentRepository treatmentRepository){
-        this.appointmentRepository = Validate.notNull(appointmentRepository);
-        this.doctorRepository = Validate.notNull(doctorRepository);
-        this.treatmentRepository = Validate.notNull(treatmentRepository);
+    public CreateAppointment(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, TreatmentRepository treatmentRepository) {
+        this.appointmentRepository = appointmentRepository;
+        this.doctorRepository = doctorRepository;
+        this.patientRepository = patientRepository;
+        this.treatmentRepository = treatmentRepository;
     }
 
-    public String execute(String doctorId, String patientId, List<String> treatmentIds) throws RuntimeException {
+    public String execute(String patientId, String doctorId, List<String> treatmentIds) throws UseCaseException {
         try {
-            existsCheck(doctorId,patientId,treatmentIds);
+            existsCheck(patientId, doctorId, treatmentIds);
             String appointmentId = UUID.randomUUID().toString();
             Appointment appointment = new Appointment(appointmentId, doctorId, patientId, treatmentIds);
             appointmentRepository.addAppointment(appointment);
             return appointment.getAppointmentId();
         }
         catch (RuntimeException e){
-            throw new RuntimeException();
+            throw new UseCaseException();
         }
     }
 
-    private void existsCheck(String doctorId, String patientId, List<String> treatmentIds){
-        Doctor doctor = doctorRepository.findDoctorById(Validate.notBlank(doctorId));
-          List<Treatment> treatments = treatmentRepository.findTreatmentsByIds(Validate.notNull(treatmentIds));
-        if (ObjectUtils.anyNull(doctor) || ObjectUtils.anyNull(treatments))
-        {
-            throw new RuntimeException();
+    private void existsCheck(String patientId, String doctorId, List<String> treatmentIds) throws UseCaseException {
+       Patient patient = patientRepository.findPatientById(Validate.notBlank(patientId));
+       Doctor doctor = doctorRepository.findDoctorById(Validate.notBlank(doctorId));
+       List<Treatment> treatment = treatmentRepository.findTreatmentsByIds(Validate.notNull(treatmentIds));
+       if (ObjectUtils.anyNull(patient) || ObjectUtils.anyNull(doctor) || ObjectUtils.anyNull(treatment)) {
+            throw new UseCaseException();
         }
     }
 

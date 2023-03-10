@@ -1,10 +1,8 @@
 package org.example.rest;
 
-import org.example.repository.AppointmentRepository;
-import org.example.repository.DoctorRepository;
-import org.example.repository.PatientRepository;
-import org.example.repository.TreatmentRepository;
+import org.example.repository.*;
 import org.example.usecases.CreateAppointment;
+import org.example.usecases.exception.UseCaseException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -12,7 +10,6 @@ public class AppointmentController {
 
     private final AppointmentRepository appointmentRepository;
     private final DoctorRepository doctorRepository;
-
     private final PatientRepository patientRepository;
     private final TreatmentRepository treatmentRepository;
 
@@ -24,20 +21,15 @@ public class AppointmentController {
     }
 
     @PostMapping("/{newappointment}")
-    public String create(@RequestBody RestAppointmentDetails body){
-
-        CreateAppointment createAppointment = new CreateAppointment(appointmentRepository,doctorRepository,treatmentRepository);
-        RestAppointmentDetailsMapper mapper = new RestAppointmentDetailsMapper(body.getPatientName(),body.getDoctorName(),body.getTreatmentNames(),body.getDateTime(),patientRepository,doctorRepository,treatmentRepository);
-        mapper.modelToRestAppointmentDetails();
-
-        String appointment = createAppointment.execute(mapper.getDoctorId(),mapper.getPatientId(),mapper.getTreatmentIds());
-        return appointment;
+    public String create(@RequestBody RestAppointmentDetails body) throws UseCaseException {
+        CreateAppointment createAppointment = new CreateAppointment(appointmentRepository,doctorRepository,patientRepository,treatmentRepository);
+                try {
+          String appointment = createAppointment.execute(body.getPatientId(),body.getDoctorId(), body.getTreatmentIds());
+          return appointment;
+        } catch (UseCaseException e) {
+//            throw http exception for 404
+          throw new UseCaseException();
+        }
     }
-
-//    @GetMapping("/{read}")
-//    public Appointment read(@PathVariable String appointmentId){
-//        Appointment appointment = getAppointment.execute(appointmentId);
-//        return appointment;
-//    }
 
 }

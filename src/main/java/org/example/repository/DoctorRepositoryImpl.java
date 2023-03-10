@@ -1,17 +1,21 @@
 package org.example.repository;
 
 import org.example.model.Doctor;
-import org.springframework.stereotype.Repository;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//@Repository
 public class DoctorRepositoryImpl implements DoctorRepository {
 
     private final Map<String, Doctor> doctorDb = new HashMap<>();
+
+    public DoctorRepositoryImpl() {
+        this.doctorDb.put("1001",new Doctor("1001","Alfred Williams","orthodontist"));
+        this.doctorDb.put("1002",new Doctor("1002","Daniel Lewis","periodontist"));
+        this.doctorDb.put("1003",new Doctor("1003","Sarah Johnson","endodontist"));
+        this.doctorDb.put("1004",new Doctor("1004","Alice Griffith","prosthodontist"));
+    }
 
     @Override
     public Doctor findDoctorById(String doctorId){

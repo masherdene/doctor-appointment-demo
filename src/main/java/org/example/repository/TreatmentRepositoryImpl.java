@@ -1,16 +1,23 @@
 package org.example.repository;
 
 import org.example.model.Treatment;
-import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//@Repository
 public class TreatmentRepositoryImpl implements TreatmentRepository {
 
     private final Map<String, Treatment> treatmentDb = new HashMap<>();
+
+    public TreatmentRepositoryImpl() {
+        this.treatmentDb.put("0010",new Treatment("0010","bridges","prosthodontist"));
+        this.treatmentDb.put("0011",new Treatment("0011","fillings","endodontist"));
+        this.treatmentDb.put("0012",new Treatment("0012","root canal","endodontist"));
+        this.treatmentDb.put("0013",new Treatment("0013","braces","orthodontist"));
+        this.treatmentDb.put("0014",new Treatment("0014","gum treatment","periodontist"));
+        this.treatmentDb.put("0010",new Treatment("0015","crowns","prosthodontist"));
+    }
 
     @Override
     public Treatment findTreatmentById(String treatmentId){

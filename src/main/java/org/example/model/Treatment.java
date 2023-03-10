@@ -9,11 +9,11 @@ import org.apache.commons.lang3.Validate;
 public class Treatment {
     private final String treatmentId;
     private String treatmentName;
-    private String treatmentType;
+    private String specialization;
 
-    public Treatment(String treatmentId, String treatmentName, String treatmentType) {
+    public Treatment(String treatmentId, String treatmentName, String specialization) {
         this.treatmentId = Validate.notNull(treatmentId);
         this.treatmentName = Validate.notBlank(treatmentName);
-        this.treatmentType = Validate.notBlank(treatmentType);
+        this.specialization = Validate.notBlank(specialization);
     }
 }
