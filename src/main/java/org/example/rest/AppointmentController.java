@@ -5,6 +5,7 @@ import org.example.repository.DoctorRepository;
 import org.example.repository.PatientRepository;
 import org.example.repository.TreatmentRepository;
 import org.example.usecases.CreateAppointment;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -12,7 +13,6 @@ public class AppointmentController {
 
     private final AppointmentRepository appointmentRepository;
     private final DoctorRepository doctorRepository;
-
     private final PatientRepository patientRepository;
     private final TreatmentRepository treatmentRepository;
 
@@ -23,12 +23,12 @@ public class AppointmentController {
         this.treatmentRepository = treatmentRepository;
     }
 
-    @PostMapping("/{newappointment}")
+    @PostMapping(value = "/{newappointment}",consumes = MediaType.APPLICATION_JSON_VALUE)
     public String create(@RequestBody RestAppointmentDetails body){
 
         CreateAppointment createAppointment = new CreateAppointment(appointmentRepository,doctorRepository,treatmentRepository);
         RestAppointmentDetailsMapper mapper = new RestAppointmentDetailsMapper(body.getPatientName(),body.getDoctorName(),body.getTreatmentNames(),body.getDateTime(),patientRepository,doctorRepository,treatmentRepository);
-        mapper.modelToRestAppointmentDetails();
+        mapper.modelToRestAppointmentDetails(body.getPatientName());
 
         String appointment = createAppointment.execute(mapper.getDoctorId(),mapper.getPatientId(),mapper.getTreatmentIds());
         return appointment;

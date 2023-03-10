@@ -17,6 +17,10 @@ public class PatientRepositoryImpl implements PatientRepository {
     public Patient findPatientById(String patientId){
         return this.patientDb.get(patientId);
     }
+    @Override
+    public Patient findPatientByName(String patientName){
+        return this.patientDb.get(patientName);
+    }
 
     @Override
     public List<Patient> findAllPatients(){

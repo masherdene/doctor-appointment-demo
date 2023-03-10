@@ -40,19 +40,23 @@ public class RestAppointmentDetailsMapper {
         this.treatmentRepository = treatmentRepository;
     }
 
-    public void modelToRestAppointmentDetails(){
-        String patientId = UUID.randomUUID().toString();
-        Patient patient = new Patient(patientId,this.getPatientName(),this.getPatientCondition());
-        patientRepository.addPatient(patient);
-        this.setPatientId(patientId);
+    public void modelToRestAppointmentDetails(String patientName){
+        if(patientRepository.findPatientByName(patientName)==null){
+            String patientId = UUID.randomUUID().toString();
+            Patient patient = new Patient(patientId,this.getPatientName(),this.getPatientCondition());
+            patientRepository.addPatient(patient);
+            this.setPatientId(patientId);
+        } else {
+            Patient patient = patientRepository.findPatientByName(patientName);
+            this.setPatientId(patient.getPatientId());
 
-        Doctor doctor = doctorRepository.findDoctorByName(doctorName);
-        this.setDoctorId(doctor.getDoctorId());
+            Doctor doctor = doctorRepository.findDoctorByName(doctorName);
+            this.setDoctorId(doctor.getDoctorId());
 
-        for (String name:treatmentNames){
-            Treatment treatment = treatmentRepository.findTreatmentByName(name);
-            this.treatmentIds.add(treatment.getTreatmentId());
+            for (String name : treatmentNames) {
+                Treatment treatment = treatmentRepository.findTreatmentByName(name);
+                this.treatmentIds.add(treatment.getTreatmentId());
+            }
         }
     }
-
 }

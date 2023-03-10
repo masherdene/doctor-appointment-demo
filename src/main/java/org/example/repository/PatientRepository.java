@@ -7,6 +7,7 @@ import java.util.List;
 public interface PatientRepository {
 
     Patient findPatientById(String patientId);
+    Patient findPatientByName(String patientName);
     List<Patient> findAllPatients();
     void deletePatientById(String patientId);
     void addPatient(Patient patient);
