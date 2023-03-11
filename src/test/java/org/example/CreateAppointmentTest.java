@@ -19,9 +19,11 @@ import org.mockito.MockedConstruction;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.Mockito;
 import static org.mockito.Mockito.*;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 @ExtendWith(MockitoExtension.class)
@@ -31,7 +33,10 @@ public class CreateAppointmentTest {
     PatientRepository patientRepository;
     TreatmentRepository treatmentRepository;
     CreateAppointment createAppointment;
+    LocalDateTime DATETIME;
     List<String> TREATMENTIDS;
+
+    private final static DateTimeFormatter CUSTOM_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @BeforeEach
     public void SetUp() {
@@ -41,6 +46,7 @@ public class CreateAppointmentTest {
         this.treatmentRepository = Mockito.mock(TreatmentRepository.class);
         this.createAppointment = getSut();
 
+        LocalDateTime DATETIME = LocalDateTime.parse("2023-06-08 15:30",CUSTOM_FORMATTER);
         List<String> TREATMENTIDS = new ArrayList<>(2);
         TREATMENTIDS.add("3001");
         TREATMENTIDS.add("3002");
@@ -57,9 +63,8 @@ public class CreateAppointmentTest {
     }
     @Test
     public void executeThrowsException(){
-
         assertThrows(UseCaseException.class,
-                ()->{createAppointment.execute("someid","patientid", new ArrayList<>(3));}          // will create null instances for mocked objects
+                ()->{createAppointment.execute(DATETIME,"patientid" ,"doctorId", new ArrayList<>(3));}          // will create null instances for mocked objects
         );
     }
     @Test
@@ -71,7 +76,7 @@ public class CreateAppointmentTest {
         when(patientRepository.findPatientById("patientid")).thenReturn(patient);
         when(treatmentRepository.findTreatmentsByIds(TREATMENTIDS)).thenReturn(treatments);
         assertThrows(UseCaseException.class,
-                ()->{createAppointment.execute("doctorid","patientid",TREATMENTIDS);}
+                ()->{createAppointment.execute(DATETIME,"patientid","doctorid",TREATMENTIDS);}
         );
     }
     @Test
@@ -101,8 +106,8 @@ public class CreateAppointmentTest {
 
     @Test
     public void appointmentConstructorBuildsCorrectly(){
-        Appointment appointment = new Appointment("1003","doctorid","patientid",TREATMENTIDS);
-        assertEquals("1003",appointment.getAppointmentId());
+        Appointment appointment = new Appointment("appointmentid",DATETIME,"doctorid","patientid",TREATMENTIDS);
+        assertEquals("appointmentid",appointment.getAppointmentId());
         assertEquals("doctorid",appointment.getDoctorId());
         assertEquals("patientid",appointment.getPatientId());
         assertEquals(TREATMENTIDS, appointment.getTreatmentIds());
@@ -110,7 +115,7 @@ public class CreateAppointmentTest {
 
     @Test
     public void executeInvokesAddsAppointment(){
-        Appointment appointment = new Appointment("1003","doctorid","patientid",TREATMENTIDS);
+        Appointment appointment = new Appointment("appointmentid",DATETIME,"doctorid","patientid",TREATMENTIDS);
 
         doNothing().when(appointmentRepository).addAppointment(appointment);
         appointmentRepository.addAppointment(appointment);
@@ -128,11 +133,11 @@ public class CreateAppointmentTest {
         when(treatmentRepository.findTreatmentsByIds(TREATMENTIDS)).thenReturn(treatments);
 
         try(MockedConstruction<Appointment> appointmentMock = Mockito.mockConstruction(Appointment.class,(mock,context) -> {
-            when(mock.getAppointmentId()).thenReturn("1003");
+            when(mock.getAppointmentId()).thenReturn("appointmentid");
         })){
 //                        Appointment appointment = appointmentMock.constructed().get(0);
-            when(createAppointment.execute("doctorid","patientid",TREATMENTIDS)).thenReturn(new ArrayList<String>());
-            assertEquals("1003",createAppointment.execute("doctorid","patientid",TREATMENTIDS));
+            when(createAppointment.execute(DATETIME,"patientid","doctorid",TREATMENTIDS)).thenReturn(new ArrayList<String>());
+            assertEquals("appointmentid",createAppointment.execute(DATETIME,"patientid","doctorid",TREATMENTIDS));
         }
     }
 }

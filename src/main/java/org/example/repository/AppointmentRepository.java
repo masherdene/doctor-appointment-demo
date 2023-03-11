@@ -9,5 +9,6 @@ public interface AppointmentRepository {
     List<Appointment> findAllAppointments();
     void deleteAppointmentById(String appointmentId);
     void addAppointment(Appointment appointment);
+    void updateAppointment(String appointmentId, Appointment appointment);
 
 }

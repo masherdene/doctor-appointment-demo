@@ -29,6 +29,11 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     }
 
     @Override
+    public void updateAppointment(String appointmentId,Appointment appointment){
+        this.appointmentDb.replace(appointmentId,appointment);
+    }
+
+    @Override
     public void deleteAppointmentById(String appointmentId){
         this.appointmentDb.remove(appointmentId);
     }

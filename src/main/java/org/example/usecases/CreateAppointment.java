@@ -11,12 +11,10 @@ import org.example.repository.DoctorRepository;
 import org.example.repository.PatientRepository;
 import org.example.repository.TreatmentRepository;
 import org.example.usecases.exception.UseCaseException;
-
+import static org.example.rest.AppointmentController.CUSTOM_FORMATTER;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CreateAppointment {
 
@@ -24,8 +22,7 @@ public class CreateAppointment {
     private DoctorRepository doctorRepository;
     private PatientRepository patientRepository;
     private TreatmentRepository treatmentRepository;
-
-    private final static DateTimeFormatter CUSTOM_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final static AtomicInteger id = new AtomicInteger();
 
     public CreateAppointment(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, TreatmentRepository treatmentRepository) {
         this.appointmentRepository = appointmentRepository;
@@ -35,18 +32,16 @@ public class CreateAppointment {
     }
 
     public List<String> execute(LocalDateTime appointmentDateTime, String patientId, String doctorId, List<String> treatmentIds) throws UseCaseException {
+        existsCheck(patientId, doctorId, treatmentIds);
         try {
-            existsCheck(patientId, doctorId, treatmentIds);
-            String appointmentId = UUID.randomUUID().toString();
+//            String appointmentId = UUID.randomUUID().toString();
+            String appointmentId = generateNumericId();
             Appointment appointment = new Appointment(appointmentId, appointmentDateTime, doctorId, patientId, treatmentIds);
             appointmentRepository.addAppointment(appointment);
-            List<String> output = new ArrayList<>();
-            output.add(appointment.getAppointmentId());
-            output.add(appointment.getAppointmentDateTime().format(CUSTOM_FORMATTER));
-            return output;
+            return List.of(appointment.getAppointmentId(),appointment.getAppointmentDateTime().format(CUSTOM_FORMATTER));
         }
         catch (RuntimeException e){
-            throw new UseCaseException("not created");
+            throw new UseCaseException("appointment not created");
         }
     }
 
@@ -57,6 +52,10 @@ public class CreateAppointment {
        if (ObjectUtils.anyNull(patient) || ObjectUtils.anyNull(doctor) || ObjectUtils.anyNull(treatment)) {
             throw new UseCaseException("id not found");
         }
+    }
+
+    private String generateNumericId(){
+        return String.valueOf(id.incrementAndGet());
     }
 
 }

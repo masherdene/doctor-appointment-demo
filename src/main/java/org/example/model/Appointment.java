@@ -10,7 +10,6 @@ import java.util.List;
 @Setter
 public class Appointment {
     private final String appointmentId;                             // declared final because it's unique non-changable identifier
-
     private LocalDateTime appointmentDateTime;
     private final String doctorId;                                  // declared final because it's unique non-changable identifier
     private final String patientId;                                 // declared final because it's unique non-changable identifier
