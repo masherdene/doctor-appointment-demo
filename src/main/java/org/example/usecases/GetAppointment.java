@@ -1,28 +1,19 @@
 package org.example.usecases;
 
 import org.apache.commons.lang3.Validate;
+import java.util.List;
 import org.example.model.Appointment;
 import org.example.repository.AppointmentRepository;
-import org.example.repository.DoctorRepository;
-import org.example.repository.PatientRepository;
-import org.example.repository.TreatmentRepository;
 import org.example.usecases.exception.UseCaseException;
 import static org.example.rest.AppointmentController.CUSTOM_FORMATTER;
-import java.util.List;
 
 
 public class GetAppointment {
 
     private AppointmentRepository appointmentRepository;
-    private DoctorRepository doctorRepository;
-    private PatientRepository patientRepository;
-    private TreatmentRepository treatmentRepository;
 
-    public GetAppointment(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, TreatmentRepository treatmentRepository){
+    public GetAppointment(AppointmentRepository appointmentRepository) {
         this.appointmentRepository = appointmentRepository;
-        this.doctorRepository = doctorRepository;
-        this.patientRepository = patientRepository;
-        this.treatmentRepository = treatmentRepository;
     }
 
     public List<String> execute(String appointmentId) throws UseCaseException {

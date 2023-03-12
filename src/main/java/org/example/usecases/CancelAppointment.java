@@ -11,15 +11,9 @@ import org.example.usecases.exception.UseCaseException;
 public class CancelAppointment {
 
     private AppointmentRepository appointmentRepository;
-    private DoctorRepository doctorRepository;
-    private PatientRepository patientRepository;
-    private TreatmentRepository treatmentRepository;
 
-    public CancelAppointment(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, TreatmentRepository treatmentRepository) {
+    public CancelAppointment(AppointmentRepository appointmentRepository) {
         this.appointmentRepository = appointmentRepository;
-        this.doctorRepository = doctorRepository;
-        this.patientRepository = patientRepository;
-        this.treatmentRepository = treatmentRepository;
     }
 
     public String execute(String appointmentId) throws UseCaseException {

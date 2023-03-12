@@ -10,12 +10,13 @@ import java.util.List;
 @Setter
 public class RestAppointmentDetails {
 
+    private String appointmentId;
     private String patientId;
     private String patientCondition;
     private String doctorId;
     private String doctorSpecialization;
     private List<String> treatmentIds;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime appointmentDateTime;
 }

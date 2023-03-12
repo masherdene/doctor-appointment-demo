@@ -1,10 +1,7 @@
 package org.example.rest;
 
 import org.example.repository.*;
-import org.example.usecases.CancelAppointment;
-import org.example.usecases.CreateAppointment;
-import org.example.usecases.GetAppointment;
-import org.example.usecases.UpdatePartialAppointment;
+import org.example.usecases.*;
 import org.example.usecases.exception.UseCaseException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -22,7 +19,7 @@ public class AppointmentController {
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
     private final TreatmentRepository treatmentRepository;
-    public final static DateTimeFormatter CUSTOM_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public final static DateTimeFormatter CUSTOM_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public AppointmentController(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, TreatmentRepository treatmentRepository) {
         this.appointmentRepository = appointmentRepository;
@@ -32,7 +29,7 @@ public class AppointmentController {
     }
 
     @PostMapping("/newappointment")
-    public ResponseEntity<List<String>> create(@RequestBody RestAppointmentDetails body) throws UseCaseException {
+    public ResponseEntity<List<String>> create(@RequestBody RestAppointmentDetails body) {
         try {
           CreateAppointment createAppointment = new CreateAppointment(appointmentRepository,doctorRepository,patientRepository,treatmentRepository);
           List<String> appointment = createAppointment.execute(body.getAppointmentDateTime(), body.getPatientId(),body.getDoctorId(), body.getTreatmentIds());
@@ -46,7 +43,7 @@ public class AppointmentController {
     @RequestMapping("/appointment/{id}")
     public ResponseEntity<List<String>> read(@PathVariable String id){
         try{
-            GetAppointment getAppointment = new GetAppointment(appointmentRepository,doctorRepository,patientRepository,treatmentRepository);
+            GetAppointment getAppointment = new GetAppointment(appointmentRepository);
             List<String> appointment = getAppointment.execute(id);
             return ResponseEntity.status(HttpStatus.FOUND).body(appointment);
         } catch (UseCaseException e){
@@ -57,7 +54,7 @@ public class AppointmentController {
     @DeleteMapping("/appointment")
     public ResponseEntity<String> delete(@RequestParam(value = "id", defaultValue = "1") String id){
         try {
-            CancelAppointment cancelAppointment = new CancelAppointment(appointmentRepository,doctorRepository,patientRepository,treatmentRepository);
+            CancelAppointment cancelAppointment = new CancelAppointment(appointmentRepository);
             String appointment = cancelAppointment.execute(id);
             return ResponseEntity.status(HttpStatus.OK).body(appointment);
         } catch (UseCaseException e) {
@@ -68,11 +65,22 @@ public class AppointmentController {
     @PatchMapping("/update")
     public ResponseEntity <List<String>> updatePartial(@RequestParam(value = "id") String id, @RequestParam(value = "datetime") String datetime){
         try {
-            UpdatePartialAppointment updatePartialAppointment = new UpdatePartialAppointment(appointmentRepository,doctorRepository,patientRepository,treatmentRepository);
+            UpdatePartialAppointment updatePartialAppointment = new UpdatePartialAppointment(appointmentRepository);
             List<String> appointment = updatePartialAppointment.execute(id, LocalDateTime.parse(datetime, CUSTOM_FORMATTER));
             return ResponseEntity.status(HttpStatus.CREATED).body(appointment);
         } catch (UseCaseException e) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(List.of(e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(List.of(e.getMessage()));
+        }
+    }
+
+    @PutMapping("/update")
+    public  ResponseEntity<List<String>> update(@RequestBody RestAppointmentDetails body){
+        try {
+            UpdateAppointment updateAppointment = new UpdateAppointment(appointmentRepository,doctorRepository,patientRepository,treatmentRepository);
+            List<String> appointment = updateAppointment.execute(body.getAppointmentId(),body.getAppointmentDateTime(),body.getPatientId(),body.getDoctorId(),body.getTreatmentIds());
+            return ResponseEntity.status(HttpStatus.CREATED).body(appointment);
+        } catch (UseCaseException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(List.of(e.getMessage()));
         }
     }
 }

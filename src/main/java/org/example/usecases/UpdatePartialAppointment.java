@@ -1,28 +1,19 @@
 package org.example.usecases;
-
-import org.example.model.Appointment;
-import org.example.repository.AppointmentRepository;
-import org.example.repository.DoctorRepository;
-import org.example.repository.PatientRepository;
-import org.example.repository.TreatmentRepository;
-import org.example.usecases.exception.UseCaseException;
-import static org.example.rest.AppointmentController.CUSTOM_FORMATTER;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.example.model.Appointment;
+import org.example.repository.AppointmentRepository;
+import org.example.usecases.exception.UseCaseException;
+import static org.example.rest.AppointmentController.CUSTOM_FORMATTER;
+
 
 
 public class UpdatePartialAppointment {
 
     private AppointmentRepository appointmentRepository;
-    private DoctorRepository doctorRepository;
-    private PatientRepository patientRepository;
-    private TreatmentRepository treatmentRepository;
 
-    public UpdatePartialAppointment(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, TreatmentRepository treatmentRepository) {
+    public UpdatePartialAppointment(AppointmentRepository appointmentRepository) {
         this.appointmentRepository = appointmentRepository;
-        this.doctorRepository = doctorRepository;
-        this.patientRepository = patientRepository;
-        this.treatmentRepository = treatmentRepository;
     }
 
     public List<String> execute(String appointmentId, LocalDateTime newAppointmentDateTime) throws UseCaseException {

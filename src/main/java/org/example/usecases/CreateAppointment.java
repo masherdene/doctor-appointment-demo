@@ -2,6 +2,9 @@ package org.example.usecases;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.ObjectUtils;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.example.model.Appointment;
 import org.example.model.Doctor;
 import org.example.model.Patient;
@@ -12,9 +15,7 @@ import org.example.repository.PatientRepository;
 import org.example.repository.TreatmentRepository;
 import org.example.usecases.exception.UseCaseException;
 import static org.example.rest.AppointmentController.CUSTOM_FORMATTER;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+
 
 public class CreateAppointment {
 
@@ -38,7 +39,7 @@ public class CreateAppointment {
             String appointmentId = generateNumericId();
             Appointment appointment = new Appointment(appointmentId, appointmentDateTime, doctorId, patientId, treatmentIds);
             appointmentRepository.addAppointment(appointment);
-            return List.of(appointment.getAppointmentId(),appointment.getAppointmentDateTime().format(CUSTOM_FORMATTER));
+            return List.of(appointment.getAppointmentId(), appointment.getAppointmentDateTime().format(CUSTOM_FORMATTER));
         }
         catch (RuntimeException e){
             throw new UseCaseException("appointment not created");
@@ -49,7 +50,7 @@ public class CreateAppointment {
        Patient patient = patientRepository.findPatientById(Validate.notBlank(patientId));
        Doctor doctor = doctorRepository.findDoctorById(Validate.notBlank(doctorId));
        List<Treatment> treatment = treatmentRepository.findTreatmentsByIds(Validate.notNull(treatmentIds));
-       if (ObjectUtils.anyNull(patient) || ObjectUtils.anyNull(doctor) || ObjectUtils.anyNull(treatment)) {
+       if (ObjectUtils.anyNull(patient,doctor) || ObjectUtils.anyNull(treatment)) {
             throw new UseCaseException("id not found");
         }
     }
