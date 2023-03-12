@@ -2,5 +2,5 @@ curl -X POST http://localhost:8080/newappointment -H "Content-Type: application/
 curl -v -X GET http://localhost:8080/appointment/1
 curl -X DELETE http://localhost:8080/appointment?id=1
 curl -X PATCH http://localhost:8080/update -d "id=1&datetime=2024-01-02 09:45"
-curl -X PUT http://localhost:8080/update -H "Content-Type: application/json" -d '{"appointmentId":"1", "patientId":"80001", "patientCondition":"orthodontist","doctorId":"1001","doctorSpecialization":"orthodontist","treatmentIds":["0014"],"appointmentDateTime":"2023-12-01 12:00"}'
+curl -X PUT http://localhost:8080/update -H "Content-Type: application/json" -d '{"appointmentId":"1", "patientId":"80001", "patientCondition":"orthodontist","doctorId":"1001","doctorSpecialization":"orthodontist","treatmentIds":["0013"],"appointmentDateTime":"2023-12-01 12:00"}'
 

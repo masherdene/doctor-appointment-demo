@@ -19,10 +19,10 @@ import static org.example.rest.AppointmentController.CUSTOM_FORMATTER;
 
 public class CreateAppointment {
 
-    private AppointmentRepository appointmentRepository;
-    private DoctorRepository doctorRepository;
-    private PatientRepository patientRepository;
-    private TreatmentRepository treatmentRepository;
+    private final AppointmentRepository appointmentRepository;
+    private final DoctorRepository doctorRepository;
+    private final PatientRepository patientRepository;
+    private final TreatmentRepository treatmentRepository;
     private final static AtomicInteger id = new AtomicInteger();
 
     public CreateAppointment(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, TreatmentRepository treatmentRepository) {
@@ -39,7 +39,7 @@ public class CreateAppointment {
             String appointmentId = generateNumericId();
             Appointment appointment = new Appointment(appointmentId, appointmentDateTime, doctorId, patientId, treatmentIds);
             appointmentRepository.addAppointment(appointment);
-            return List.of(appointment.getAppointmentId(), appointment.getAppointmentDateTime().format(CUSTOM_FORMATTER));
+            return List.of(appointment.getAppointmentId(),appointment.getAppointmentDateTime().format(CUSTOM_FORMATTER));
         }
         catch (RuntimeException e){
             throw new UseCaseException("appointment not created");

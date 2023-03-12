@@ -1,6 +1,8 @@
 package org.example.usecases;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import org.apache.commons.lang3.Validate;
 import org.example.model.Appointment;
 import org.example.repository.AppointmentRepository;
 import org.example.usecases.exception.UseCaseException;
@@ -10,14 +12,14 @@ import static org.example.rest.AppointmentController.CUSTOM_FORMATTER;
 
 public class UpdatePartialAppointment {
 
-    private AppointmentRepository appointmentRepository;
+    private final AppointmentRepository appointmentRepository;
 
     public UpdatePartialAppointment(AppointmentRepository appointmentRepository) {
         this.appointmentRepository = appointmentRepository;
     }
 
     public List<String> execute(String appointmentId, LocalDateTime newAppointmentDateTime) throws UseCaseException {
-        Appointment appointment = appointmentRepository.findAppointmentById(appointmentId);
+        Appointment appointment = appointmentRepository.findAppointmentById(Validate.notBlank(appointmentId));
         if(appointment == null){
             new UseCaseException("appointment not found");
         }

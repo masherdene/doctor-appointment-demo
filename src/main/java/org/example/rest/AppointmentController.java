@@ -3,7 +3,6 @@ package org.example.rest;
 import org.example.repository.*;
 import org.example.usecases.*;
 import org.example.usecases.exception.UseCaseException;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +42,7 @@ public class AppointmentController {
     @RequestMapping("/appointment/{id}")
     public ResponseEntity<List<String>> read(@PathVariable String id){
         try{
-            GetAppointment getAppointment = new GetAppointment(appointmentRepository);
+            GetAppointment getAppointment = new GetAppointment(appointmentRepository,doctorRepository,patientRepository,treatmentRepository);
             List<String> appointment = getAppointment.execute(id);
             return ResponseEntity.status(HttpStatus.FOUND).body(appointment);
         } catch (UseCaseException e){

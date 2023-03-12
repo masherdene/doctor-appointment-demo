@@ -17,7 +17,7 @@ public class CancelAppointment {
     }
 
     public String execute(String appointmentId) throws UseCaseException {
-        Validate.notNull(appointmentId);
+        Validate.notNull(Validate.notBlank(appointmentId));
         Appointment appointment = appointmentRepository.findAppointmentById(appointmentId);
         if(appointment==null){
             new UseCaseException("not found");

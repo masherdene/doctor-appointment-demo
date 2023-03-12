@@ -17,10 +17,10 @@ import static org.example.rest.AppointmentController.CUSTOM_FORMATTER;
 
 public class UpdateAppointment {
 
-    private AppointmentRepository appointmentRepository;
-    private DoctorRepository doctorRepository;
-    private PatientRepository patientRepository;
-    private TreatmentRepository treatmentRepository;
+    private final AppointmentRepository appointmentRepository;
+    private final DoctorRepository doctorRepository;
+    private final PatientRepository patientRepository;
+    private final TreatmentRepository treatmentRepository;
 
     public UpdateAppointment(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, TreatmentRepository treatmentRepository) {
         this.appointmentRepository = appointmentRepository;
@@ -41,7 +41,7 @@ public class UpdateAppointment {
     }
 
     private void existsCheck(String appointmentId, String patientId, String doctorId, List<String> treatmentIds) throws UseCaseException {
-        Appointment appointment = appointmentRepository.findAppointmentById(appointmentId);
+        Appointment appointment = appointmentRepository.findAppointmentById(Validate.notBlank(appointmentId));
         Patient patient = patientRepository.findPatientById(Validate.notBlank(patientId));
         Doctor doctor = doctorRepository.findDoctorById(Validate.notBlank(doctorId));
         List<Treatment> treatment = treatmentRepository.findTreatmentsByIds(Validate.notNull(treatmentIds));
