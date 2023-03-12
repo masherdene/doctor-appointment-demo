@@ -28,13 +28,13 @@ import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 public class CreateAppointmentTest {
-    AppointmentRepository appointmentRepository;
-    DoctorRepository doctorRepository;
-    PatientRepository patientRepository;
-    TreatmentRepository treatmentRepository;
-    CreateAppointment createAppointment;
-    LocalDateTime DATETIME;
-    List<String> TREATMENTIDS;
+    private AppointmentRepository appointmentRepository;
+    private DoctorRepository doctorRepository;
+    private PatientRepository patientRepository;
+    private TreatmentRepository treatmentRepository;
+    private CreateAppointment createAppointment;
+    private LocalDateTime DATETIME;
+    private List<String> TREATMENTIDS;
 
     private final static DateTimeFormatter CUSTOM_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 

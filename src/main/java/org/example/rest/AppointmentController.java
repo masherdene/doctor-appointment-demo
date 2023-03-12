@@ -6,7 +6,6 @@ import org.example.usecases.exception.UseCaseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -28,7 +27,7 @@ public class AppointmentController {
     }
 
     @PostMapping("/newappointment")
-    public ResponseEntity<List<String>> create(@RequestBody RestAppointmentDetails body) {
+    public ResponseEntity<List<String>> create(@RequestBody AppointmentRestDto body) {
         try {
           CreateAppointment createAppointment = new CreateAppointment(appointmentRepository,doctorRepository,patientRepository,treatmentRepository);
           List<String> appointment = createAppointment.execute(body.getAppointmentDateTime(), body.getPatientId(),body.getDoctorId(), body.getTreatmentIds());
@@ -73,7 +72,7 @@ public class AppointmentController {
     }
 
     @PutMapping("/update")
-    public  ResponseEntity<List<String>> update(@RequestBody RestAppointmentDetails body){
+    public  ResponseEntity<List<String>> update(@RequestBody AppointmentRestDto body){
         try {
             UpdateAppointment updateAppointment = new UpdateAppointment(appointmentRepository,doctorRepository,patientRepository,treatmentRepository);
             List<String> appointment = updateAppointment.execute(body.getAppointmentId(),body.getAppointmentDateTime(),body.getPatientId(),body.getDoctorId(),body.getTreatmentIds());
