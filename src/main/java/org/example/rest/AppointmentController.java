@@ -26,7 +26,7 @@ public class AppointmentController {
         this.treatmentRepository = treatmentRepository;
     }
 
-    @PostMapping("/newappointment")
+    @PostMapping("/appointments")
     public ResponseEntity<List<String>> create(@RequestBody AppointmentRestDto body) {
         try {
           CreateAppointment createAppointment = new CreateAppointment(appointmentRepository,doctorRepository,patientRepository,treatmentRepository);
@@ -38,7 +38,7 @@ public class AppointmentController {
         }
     }
 
-    @GetMapping("/appointment/{id}")
+    @GetMapping("/appointments/{id}")
     public ResponseEntity<List<String>> read(@PathVariable String id){
         try{
             GetAppointment getAppointment = new GetAppointment(appointmentRepository,doctorRepository,patientRepository,treatmentRepository);
@@ -49,7 +49,7 @@ public class AppointmentController {
         }
     }
 
-    @DeleteMapping("/appointment")
+    @DeleteMapping("/appointments")
     public ResponseEntity<String> delete(@RequestParam(value = "id", defaultValue = "1") String id){
         try {
             CancelAppointment cancelAppointment = new CancelAppointment(appointmentRepository);
@@ -60,7 +60,7 @@ public class AppointmentController {
         }
     }
 
-    @PatchMapping("/update")
+    @PatchMapping("/appointments")
     public ResponseEntity <List<String>> updatePartial(@RequestParam(value = "id") String id, @RequestParam(value = "datetime") String datetime){
         try {
             UpdatePartialAppointment updatePartialAppointment = new UpdatePartialAppointment(appointmentRepository);
@@ -71,7 +71,7 @@ public class AppointmentController {
         }
     }
 
-    @PutMapping("/update")
+    @PutMapping("/appointments")
     public  ResponseEntity<List<String>> update(@RequestBody AppointmentRestDto body){
         try {
             UpdateAppointment updateAppointment = new UpdateAppointment(appointmentRepository,doctorRepository,patientRepository,treatmentRepository);
