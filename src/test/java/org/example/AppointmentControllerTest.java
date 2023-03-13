@@ -38,7 +38,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-@ExtendWith({MockitoExtension.class, SpringExtension.class})
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {AppointmentController.class})                                                          // @ContextConfiguration annotation includes a reference to the real controller we want to test: Spring will create a bean for this controller and will autowire it to the test.
 @Import(AppointmentControllerTest.Config.class)
 public class AppointmentControllerTest {
@@ -52,8 +52,7 @@ public class AppointmentControllerTest {
     @Mock
     private TreatmentRepository treatmentRepository;
     @Autowired
-    private CreateAppointment createAppointment;                                                                        // Depended on Component (DOT)
-    @Autowired
+    private CreateAppointment createAppointment;                                                                        // Depended On Component (DOT)
     private AppointmentController appointmentController;                                                                // System Under Test (SUT)
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -64,7 +63,7 @@ public class AppointmentControllerTest {
         MockitoAnnotations.openMocks(this).close();
         objectMapper = JsonMapper.builder().findAndAddModules().build();
         mockMvc = MockMvcBuilders.standaloneSetup(appointmentController).build();
-//        createAppointment = new CreateAppointment(appointmentRepository,doctorRepository,patientRepository,treatmentRepository);
+//        this.appointmentController = getSut();
         APPOINTMENTDATE = "2023-06-30 15:30";
     }
 
@@ -77,6 +76,10 @@ public class AppointmentControllerTest {
         }
     }
 
+    private AppointmentController getSut() {                                                                            // System Under Test (SUT)
+        return new AppointmentController(appointmentRepository, doctorRepository, patientRepository, treatmentRepository);
+    }
+
     @Test
     public void postPassengerTest() throws Exception {
         when(createAppointment.execute(LocalDateTime.parse(APPOINTMENTDATE,CUSTOM_FORMATTER),"80001","1002",new ArrayList<>(List.of("0010","0011")))).thenReturn(List.of("1",APPOINTMENTDATE));
@@ -84,11 +87,12 @@ public class AppointmentControllerTest {
         mockMvc.perform(post("/newappointment").accept(MediaType.APPLICATION_JSON).characterEncoding("utf-8").contentType(MediaType.APPLICATION_JSON).content(appointmentRestDto))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-//                .andExpect(jsonPath("$.appointmentId").value("1"));
-//                .andExpect(jsonPath("$.appointmentDate").value(LocalDateTime.parse(APPOINTMENTDATE, CUSTOM_FORMATTER)))
-//                .andExpect(jsonPath("$.doctorId").value("doctorid"))
-//                .andExpect(jsonPath("$.doctorId").value("patientid"));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.appointmentId").value("1"))
+                .andExpect(jsonPath("$.appointmentDate").value(LocalDateTime.parse(APPOINTMENTDATE, CUSTOM_FORMATTER)))
+                .andExpect(jsonPath("$.doctorId").value("doctorid"))
+                .andExpect(jsonPath("$.doctorId").value("patientid"));
+
 //        Mockito.verify(appointmentRepository,times(1)).addAppointment(appointment);
     }
 

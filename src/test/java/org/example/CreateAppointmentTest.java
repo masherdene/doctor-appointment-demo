@@ -32,7 +32,7 @@ public class CreateAppointmentTest {
     private DoctorRepository doctorRepository;
     private PatientRepository patientRepository;
     private TreatmentRepository treatmentRepository;
-    private CreateAppointment createAppointment;
+    private CreateAppointment createAppointment;                                                                        // System Under Test (SUT)
     private LocalDateTime DATETIME;
     private List<String> TREATMENTIDS;
 
