@@ -38,7 +38,7 @@ public class AppointmentController {
         }
     }
 
-    @RequestMapping("/appointment/{id}")
+    @GetMapping("/appointment/{id}")
     public ResponseEntity<List<String>> read(@PathVariable String id){
         try{
             GetAppointment getAppointment = new GetAppointment(appointmentRepository,doctorRepository,patientRepository,treatmentRepository);

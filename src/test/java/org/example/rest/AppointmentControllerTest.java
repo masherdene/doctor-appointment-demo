@@ -1,24 +1,19 @@
-package org.example;
+package org.example.rest;
 
 import org.example.repository.AppointmentRepository;
 import org.example.repository.DoctorRepository;
 import org.example.repository.PatientRepository;
 import org.example.repository.TreatmentRepository;
-import org.example.rest.AppointmentController;
 import static org.example.rest.AppointmentController.CUSTOM_FORMATTER;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import org.example.rest.AppointmentRestDto;
 import org.example.usecases.CreateAppointment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,9 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -53,6 +46,7 @@ public class AppointmentControllerTest {
     private TreatmentRepository treatmentRepository;
     @Autowired
     private CreateAppointment createAppointment;                                                                        // Depended On Component (DOT)
+    @Autowired
     private AppointmentController appointmentController;                                                                // System Under Test (SUT)
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -76,9 +70,9 @@ public class AppointmentControllerTest {
         }
     }
 
-    private AppointmentController getSut() {                                                                            // System Under Test (SUT)
-        return new AppointmentController(appointmentRepository, doctorRepository, patientRepository, treatmentRepository);
-    }
+//    private AppointmentController getSut() {                                                                            // System Under Test (SUT)
+//        return new AppointmentController(appointmentRepository, doctorRepository, patientRepository, treatmentRepository);
+//    }
 
     @Test
     public void postPassengerTest() throws Exception {
@@ -92,7 +86,6 @@ public class AppointmentControllerTest {
                 .andExpect(jsonPath("$.appointmentDate").value(LocalDateTime.parse(APPOINTMENTDATE, CUSTOM_FORMATTER)))
                 .andExpect(jsonPath("$.doctorId").value("doctorid"))
                 .andExpect(jsonPath("$.doctorId").value("patientid"));
-
 //        Mockito.verify(appointmentRepository,times(1)).addAppointment(appointment);
     }
 

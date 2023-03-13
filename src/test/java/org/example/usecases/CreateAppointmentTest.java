@@ -1,4 +1,4 @@
-package org.example;
+package org.example.usecases;
 
 import org.example.model.Appointment;
 import org.example.model.Doctor;
