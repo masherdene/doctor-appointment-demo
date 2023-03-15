@@ -28,13 +28,13 @@ import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 public class CreateAppointmentTest {
-    private AppointmentRepository appointmentRepository;
+    private AppointmentRepository appointmentRepository;                                                                // Depended On Components (DOTs)
     private DoctorRepository doctorRepository;
     private PatientRepository patientRepository;
     private TreatmentRepository treatmentRepository;
     private CreateAppointment createAppointment;                                                                        // System Under Test (SUT)
-    private LocalDateTime DATETIME;
-    private List<String> TREATMENTIDS;
+    private LocalDateTime DATETIME = LocalDateTime.parse("2023-06-08 15:30",CUSTOM_FORMATTER);
+    List<String> TREATMENTIDS = new ArrayList<>(2);
 
     private final static DateTimeFormatter CUSTOM_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
@@ -45,11 +45,9 @@ public class CreateAppointmentTest {
         this.patientRepository = Mockito.mock(PatientRepository.class);
         this.treatmentRepository = Mockito.mock(TreatmentRepository.class);
         this.createAppointment = getSut();
-
-        LocalDateTime DATETIME = LocalDateTime.parse("2023-06-08 15:30",CUSTOM_FORMATTER);
-        List<String> TREATMENTIDS = new ArrayList<>(2);
         TREATMENTIDS.add("3001");
         TREATMENTIDS.add("3002");
+
     }
 
     private CreateAppointment getSut() {                                                                                        // SUT: System Under Test
@@ -116,7 +114,6 @@ public class CreateAppointmentTest {
     @Test
     public void executeInvokesAddsAppointment(){
         Appointment appointment = new Appointment("appointmentid",DATETIME,"doctorid","patientid",TREATMENTIDS);
-
         doNothing().when(appointmentRepository).addAppointment(appointment);
         appointmentRepository.addAppointment(appointment);
         verify(appointmentRepository, times(1)).addAppointment(appointment);
@@ -140,4 +137,5 @@ public class CreateAppointmentTest {
             assertEquals("appointmentid",createAppointment.execute(DATETIME,"patientid","doctorid",TREATMENTIDS));
         }
     }
+
 }

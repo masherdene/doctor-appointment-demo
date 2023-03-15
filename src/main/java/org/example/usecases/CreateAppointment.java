@@ -16,7 +16,6 @@ import org.example.repository.TreatmentRepository;
 import org.example.usecases.exception.UseCaseException;
 import static org.example.rest.AppointmentController.CUSTOM_FORMATTER;
 
-
 public class CreateAppointment {
 
     private final AppointmentRepository appointmentRepository;
@@ -33,7 +32,7 @@ public class CreateAppointment {
     }
 
     public List<String> execute(LocalDateTime appointmentDateTime, String patientId, String doctorId, List<String> treatmentIds) throws UseCaseException {
-        existsCheck(patientId, doctorId, treatmentIds);
+//        existsCheck(patientId, doctorId, treatmentIds);
         try {
 //            String appointmentId = UUID.randomUUID().toString();
             String appointmentId = generateNumericId();

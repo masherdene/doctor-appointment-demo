@@ -48,9 +48,9 @@ public class GetAppointment {
 
     private List<String> existsCheckAndGetDetails(String appointmentId) throws UseCaseException {
         Appointment appointment = appointmentRepository.findAppointmentById(Validate.notBlank(appointmentId));
-        Patient patient = patientRepository.findPatientById(appointment.getPatientId());
-        Doctor doctor = doctorRepository.findDoctorById(appointment.getDoctorId());
-        List<Treatment> treatment = treatmentRepository.findTreatmentsByIds(appointment.getTreatmentIds());
+        Patient patient = patientRepository.findPatientById(Validate.notNull(appointment.getPatientId()));
+        Doctor doctor = doctorRepository.findDoctorById(Validate.notNull(appointment.getDoctorId()));
+        List<Treatment> treatment = treatmentRepository.findTreatmentsByIds(Validate.notNull(appointment.getTreatmentIds()));
         if (ObjectUtils.anyNull(appointment,patient,doctor) || ObjectUtils.anyNull(treatment)) {
             throw new UseCaseException("id not found");
         }

@@ -5,11 +5,13 @@ import org.example.repository.DoctorRepository;
 import org.example.repository.PatientRepository;
 import org.example.repository.TreatmentRepository;
 import static org.example.rest.AppointmentController.CUSTOM_FORMATTER;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -47,22 +49,15 @@ public class AppointmentControllerTest {
     private CreateAppointment createAppointment;                                                                        // Depended On Component (DOT)
     @Autowired
     private AppointmentController appointmentController;                                                                // System Under Test (SUT) which is not mocked in the inner class "Config"
+
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
     private String APPOINTMENTDATE;
 
-    @BeforeEach
-    public void setUp() throws Exception {
-        MockitoAnnotations.openMocks(this).close();
-        objectMapper = JsonMapper.builder().findAndAddModules().build();
-        this.appointmentController = getSut();
-        mockMvc = MockMvcBuilders.standaloneSetup(appointmentController).build();
-        APPOINTMENTDATE = "2023-06-30 15:30";
-    }
-
     // Inner configuration where we declare mock beans for the dependencies of the controller: Spring will inject this mock instances to our real controller and these dependencies will also be autowired to our test.
     @TestConfiguration
     protected static class Config {
+
         @Bean
         public CreateAppointment createAppointment() {
             return Mockito.mock(CreateAppointment.class);
@@ -85,21 +80,38 @@ public class AppointmentControllerTest {
         }
     }
 
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this).close();
+        objectMapper = JsonMapper.builder().findAndAddModules().build();
+        this.appointmentController = getSut();
+        mockMvc = MockMvcBuilders.standaloneSetup(appointmentController).build();
+        APPOINTMENTDATE = "2023-06-30 15:30";
+            }
+
     private AppointmentController getSut() {                                                                            // System Under Test (SUT)
         return new AppointmentController(appointmentRepository, doctorRepository, patientRepository, treatmentRepository);
     }
 
+    // TEST 0: needs to temporarily declare existsCheck() public
+/*    @Test
+    public void existsCheckTest() throws Exception {
+        doNothing().when(createAppointment).existsCheck(anyString(),anyString(),anyList());
+        createAppointment.existsCheck("80001","1002",new ArrayList<>(List.of("0010","0011")));
+        verify(createAppointment,times(1)).existsCheck("80001","1002",new ArrayList<>(List.of("0010","0011")));
+    }*/
+
+    // It appears that existsCheck() inside execute() is called: (1) needs to temporarily comment out existsCheck() in execute() or (2) use JUnit4 with PowerMock to mock the private method or (3) refactor the private method into a class implementing an interface that will be injected into 'CreateAppointment'
     @Test
     public void postPassengerTest() throws Exception {
-        doNothing().when(createAppointment).existsCheck("80001","1002",new ArrayList<>(List.of("0010","0011")));            // it appears that this method is called despite it being inside the following execute()
-        when(createAppointment.execute(LocalDateTime.parse(APPOINTMENTDATE,CUSTOM_FORMATTER),"80001","1002",new ArrayList<>(List.of("0010","0011")))).thenReturn(List.of("1",APPOINTMENTDATE));
-        String appointmentRestDto = objectMapper.writeValueAsString(new AppointmentRestDto("80001","periodontitis","1002","periodontitis",new ArrayList<>(List.of("0010","0011")),LocalDateTime.parse(APPOINTMENTDATE, CUSTOM_FORMATTER)));
+        when(createAppointment.execute(LocalDateTime.parse(APPOINTMENTDATE,CUSTOM_FORMATTER),"patientid","doctorid", new ArrayList<>(List.of("0010","0011")))).thenReturn(List.of("1",APPOINTMENTDATE));
+        String appointmentRestDto = objectMapper.writeValueAsString(new AppointmentRestDto("patientid","periodontitis","doctorid","periodontitis",new ArrayList<>(List.of("0010","0011")),LocalDateTime.parse(APPOINTMENTDATE, CUSTOM_FORMATTER)));
         mockMvc.perform(post("/appointments").accept(MediaType.APPLICATION_JSON).characterEncoding("utf-8").contentType(MediaType.APPLICATION_JSON).content(appointmentRestDto))
                 .andDo(print())
-                .andExpect(status().isCreated());
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("$.appointmentId").value("1"))
-//                .andExpect(jsonPath("$.appointmentDate").value(LocalDateTime.parse(APPOINTMENTDATE, CUSTOM_FORMATTER)))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.appointmentId").value(null))
+                .andExpect(jsonPath("$.appointmentDateTime").value(LocalDateTime.parse(APPOINTMENTDATE, CUSTOM_FORMATTER)));
 //                .andExpect(jsonPath("$.doctorId").value("doctorid"))
 //                .andExpect(jsonPath("$.doctorId").value("patientid"));
 //        Mockito.verify(appointmentRepository,times(1)).addAppointment(appointment);
