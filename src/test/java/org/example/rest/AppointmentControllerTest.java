@@ -101,7 +101,7 @@ public class AppointmentControllerTest {
         verify(createAppointment,times(1)).existsCheck("80001","1002",new ArrayList<>(List.of("0010","0011")));
     }*/
 
-    // It appears that existsCheck() inside execute() is called: (1) needs to temporarily comment out existsCheck() in execute() or (2) use JUnit4 with PowerMock to mock the private method or (3) refactor the private method into a class implementing an interface that will be injected into 'CreateAppointment'
+    // TEST 1: It appears that existsCheck() inside execute() is called: (1) needs to temporarily comment out existsCheck() in execute() or (2) use JUnit4 with PowerMock to mock the private method or (3) refactor the private method into a class implementing an interface that will be injected into 'CreateAppointment'
     @Test
     public void postPassengerTest() throws Exception {
         when(createAppointment.execute(LocalDateTime.parse(APPOINTMENTDATE,CUSTOM_FORMATTER),"patientid","doctorid", new ArrayList<>(List.of("0010","0011")))).thenReturn(List.of("1",APPOINTMENTDATE));
