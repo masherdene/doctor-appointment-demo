@@ -30,7 +30,7 @@ public class AppointmentController {
     public ResponseEntity<List<String>> create(@RequestBody AppointmentRestDto body) {
         try {
           CreateAppointment createAppointment = new CreateAppointment(appointmentRepository,doctorRepository,patientRepository,treatmentRepository);
-          List<String> appointment = createAppointment.execute(body.getAppointmentDateTime(), body.getPatientId(),body.getDoctorId(), body.getTreatmentIds());
+          List<String> appointment = createAppointment.execute(body.getAppointmentDateTime(),body.getPatientId(),body.getDoctorId(),body.getTreatmentIds());
           return ResponseEntity.status(HttpStatus.CREATED).body(appointment);
         }
         catch (UseCaseException e) {

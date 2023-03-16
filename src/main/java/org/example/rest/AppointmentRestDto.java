@@ -8,10 +8,11 @@ import lombok.*;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 public class AppointmentRestDto {
 
+    @JsonProperty("appointmentId")
     private String appointmentId;
     @NonNull
     @JsonProperty("patientId")
