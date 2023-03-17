@@ -25,14 +25,14 @@ public class CreateAppointment {
     private final static AtomicInteger id = new AtomicInteger();
 
     public CreateAppointment(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, TreatmentRepository treatmentRepository) {
-        this.appointmentRepository = appointmentRepository;
-        this.doctorRepository = doctorRepository;
-        this.patientRepository = patientRepository;
-        this.treatmentRepository = treatmentRepository;
+        this.appointmentRepository = Validate.notNull(appointmentRepository);
+        this.doctorRepository = Validate.notNull(doctorRepository);
+        this.patientRepository = Validate.notNull(patientRepository);
+        this.treatmentRepository = Validate.notNull(treatmentRepository);
     }
 
     public List<String> execute(LocalDateTime appointmentDateTime, String patientId, String doctorId, List<String> treatmentIds) throws UseCaseException {
-//        existsCheck(patientId, doctorId, treatmentIds);
+        existsCheck(patientId, doctorId, treatmentIds);
         try {
 //            String appointmentId = UUID.randomUUID().toString();
             String appointmentId = generateNumericId();

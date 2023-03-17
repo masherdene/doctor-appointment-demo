@@ -8,7 +8,6 @@ import org.example.repository.AppointmentRepository;
 import org.example.repository.DoctorRepository;
 import org.example.repository.PatientRepository;
 import org.example.repository.TreatmentRepository;
-import org.example.usecases.CreateAppointment;
 
 import org.example.usecases.exception.UseCaseException;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +32,7 @@ public class CreateAppointmentTest {
     private PatientRepository patientRepository;
     private TreatmentRepository treatmentRepository;
     private CreateAppointment createAppointment;                                                                        // System Under Test (SUT)
-    private LocalDateTime DATETIME = LocalDateTime.parse("2023-06-08 15:30",CUSTOM_FORMATTER);
+    private final LocalDateTime APPOINTMENTDATETIME = LocalDateTime.parse("2023-06-08 15:30",CUSTOM_FORMATTER);
     List<String> TREATMENTIDS = new ArrayList<>(2);
 
     private final static DateTimeFormatter CUSTOM_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -56,25 +55,27 @@ public class CreateAppointmentTest {
 
     @Test
     public void constructorThrowsExceptionForNullArgs() {
-        assertThrows(NullPointerException.class,()-> {CreateAppointment createAppointment
+            assertThrows(NullPointerException.class,()-> {CreateAppointment createAppointment
                 = new CreateAppointment(null, null, null, null);});
     }
-    @Test
-    public void executeThrowsException(){
-        assertThrows(UseCaseException.class,
-                ()->{createAppointment.execute(DATETIME,"patientid" ,"doctorId", new ArrayList<>(3));}          // will create null instances for mocked objects
-        );
-    }
+
     @Test
     public void executeThrowsExceptionForNullObjects(){
         Doctor doctor = mock(Doctor.class);
         Patient patient = mock(Patient.class);
         List<Treatment> treatments = new ArrayList<>(2);
-        when(doctorRepository.findDoctorById("doctorid")).thenReturn(doctor);
+        when(doctorRepository.findDoctorById("doctorid")).thenReturn(null);
         when(patientRepository.findPatientById("patientid")).thenReturn(patient);
         when(treatmentRepository.findTreatmentsByIds(TREATMENTIDS)).thenReturn(treatments);
         assertThrows(UseCaseException.class,
-                ()->{createAppointment.execute(DATETIME,"patientid","doctorid",TREATMENTIDS);}
+                ()->{createAppointment.execute(APPOINTMENTDATETIME,"patientid","doctorid",TREATMENTIDS);}
+        );
+    }
+
+    @Test
+    public void executeThrowsException(){
+        assertThrows(UseCaseException.class,
+                ()->{createAppointment.execute(APPOINTMENTDATETIME,"patientid" ,"doctorId", new ArrayList<>(3));}          // will create null instances for mocked objects
         );
     }
     @Test
@@ -104,7 +105,7 @@ public class CreateAppointmentTest {
 
     @Test
     public void appointmentConstructorBuildsCorrectly(){
-        Appointment appointment = new Appointment("appointmentid",DATETIME,"doctorid","patientid",TREATMENTIDS);
+        Appointment appointment = new Appointment("appointmentid", APPOINTMENTDATETIME,"doctorid","patientid",TREATMENTIDS);
         assertEquals("appointmentid",appointment.getAppointmentId());
         assertEquals("doctorid",appointment.getDoctorId());
         assertEquals("patientid",appointment.getPatientId());
@@ -113,7 +114,7 @@ public class CreateAppointmentTest {
 
     @Test
     public void executeInvokesAddsAppointment(){
-        Appointment appointment = new Appointment("appointmentid",DATETIME,"doctorid","patientid",TREATMENTIDS);
+        Appointment appointment = new Appointment("appointmentid", APPOINTMENTDATETIME,"doctorid","patientid",TREATMENTIDS);
         doNothing().when(appointmentRepository).addAppointment(appointment);
         appointmentRepository.addAppointment(appointment);
         verify(appointmentRepository, times(1)).addAppointment(appointment);
@@ -129,12 +130,13 @@ public class CreateAppointmentTest {
         when(patientRepository.findPatientById("patientid")).thenReturn(patient);
         when(treatmentRepository.findTreatmentsByIds(TREATMENTIDS)).thenReturn(treatments);
 
-        try(MockedConstruction<Appointment> appointmentMock = Mockito.mockConstruction(Appointment.class,(mock,context) -> {
-            when(mock.getAppointmentId()).thenReturn("appointmentid");
+        try(MockedConstruction<Appointment> appointmentMock = Mockito.mockConstruction(Appointment.class,
+            (mock,context) -> {
+                when(mock.getAppointmentId()).thenReturn("appointmentid");
+                when(mock.getAppointmentDateTime()).thenReturn(APPOINTMENTDATETIME);
         })){
-//                        Appointment appointment = appointmentMock.constructed().get(0);
-            when(createAppointment.execute(DATETIME,"patientid","doctorid",TREATMENTIDS)).thenReturn(new ArrayList<String>());
-            assertEquals("appointmentid",createAppointment.execute(DATETIME,"patientid","doctorid",TREATMENTIDS));
+//            Appointment appointment = appointmentMock.constructed().get(0);
+            assertEquals(List.of("appointmentid","2023-06-08 15:30"),createAppointment.execute(APPOINTMENTDATETIME,"patientid","doctorid",TREATMENTIDS));
         }
     }
 
