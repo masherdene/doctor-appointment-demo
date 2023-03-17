@@ -123,11 +123,11 @@ public class AppointmentControllerTest {
                 .andExpect(jsonPath("[1]").value(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(APPOINTMENTDATE)));
         }
 
-    // TEST 2: It appears that existsCheckAndGetDetails() inside execute() is called: (1) needs to temporarily comment out existsCheckAndGetDetails() in execute() or (2) use JUnit4 with PowerMock to mock the private method or (3) refactor the private method into a class implementing an interface that will be injected into 'GetAppointment'
+    // TEST 2: It appears that existsCheckAndGetDetails() inside execute() is called: (1) needs to temporarily declare existsCheckAndGetDetails() public in execute() or (2) use JUnit4 with PowerMock to mock the private method or (3) refactor the private method into a class implementing an interface that will be injected into 'GetAppointment'
     @Test
     public void getAppointmentTest() throws Exception {
         when(getAppointment.execute("1")).thenReturn(new ArrayList<>(List.of("patientName","patientCondition","doctorName","0010","0011","appointmentId","appointmentDateTime")));
-        when(ReflectionTestUtils.invokeMethod(getAppointment,"existsCheckAndGetDetails","1")).thenReturn(new ArrayList<>(List.of("patientName","patientCondition","doctorName","0010","0011")));
+//        when(ReflectionTestUtils.invokeMethod(getAppointment,"existsCheckAndGetDetails","1")).thenReturn(new ArrayList<>(List.of("patientName","patientCondition","doctorName","0010","0011")));
         mockMvc.perform(get("/appointments?id={id}","1"))
                 .andDo(print())
                 .andExpect(status().isFound())

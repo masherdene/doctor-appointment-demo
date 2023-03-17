@@ -60,6 +60,13 @@ public class CreateAppointmentTest {
     }
 
     @Test
+    public void executeThrowsException(){
+        assertThrows(UseCaseException.class,
+                ()->{createAppointment.execute(APPOINTMENTDATETIME,"patientid" ,"doctorId", new ArrayList<>(3));}          // will create null instances for mocked objects
+        );
+    }
+
+    @Test
     public void executeThrowsExceptionForNullObjects(){
         Doctor doctor = mock(Doctor.class);
         Patient patient = mock(Patient.class);
@@ -72,12 +79,6 @@ public class CreateAppointmentTest {
         );
     }
 
-    @Test
-    public void executeThrowsException(){
-        assertThrows(UseCaseException.class,
-                ()->{createAppointment.execute(APPOINTMENTDATETIME,"patientid" ,"doctorId", new ArrayList<>(3));}          // will create null instances for mocked objects
-        );
-    }
     @Test
     public void executeGetsDoctor(){
         when(doctorRepository.findDoctorById("doctorid")).thenReturn(mock(Doctor.class));
