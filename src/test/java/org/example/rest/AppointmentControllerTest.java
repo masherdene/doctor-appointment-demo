@@ -92,10 +92,10 @@ public class AppointmentControllerTest {
     @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this).close();
-        objectMapper = JsonMapper.builder().findAndAddModules().build();
+        this.objectMapper = JsonMapper.builder().findAndAddModules().build();
         this.appointmentController = new AppointmentController(appointmentRepository, doctorRepository, patientRepository, treatmentRepository);
-        mockMvc = MockMvcBuilders.standaloneSetup(appointmentController).build();
-        APPOINTMENTDATETIME = LocalDateTime.of(2023, Month.JUNE,30,15,30);
+        this.mockMvc = MockMvcBuilders.standaloneSetup(appointmentController).build();
+        this.APPOINTMENTDATETIME = LocalDateTime.of(2023, Month.JUNE,30,15,30);
     }
 
     // TEST 0: needs to temporarily declare existsCheck() public
