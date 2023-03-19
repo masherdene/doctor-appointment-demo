@@ -117,7 +117,7 @@ public class CreateAppointmentTest {
     }
 
     @Test
-    public void executeReturnsExpectedValue() throws UseCaseException {
+    public void executeReturnsExpectedValues() throws UseCaseException {
         when(doctorRepository.findDoctorById("doctorid")).thenReturn(doctor);
         when(patientRepository.findPatientById("patientid")).thenReturn(patient);
         when(treatmentRepository.findTreatmentsByIds(TREATMENTIDS)).thenReturn(new ArrayList<Treatment>(2));
