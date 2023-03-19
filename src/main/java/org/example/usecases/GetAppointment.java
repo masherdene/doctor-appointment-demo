@@ -49,10 +49,13 @@ public class GetAppointment {
 
     private List<String> existsCheckAndGetDetails(String appointmentId) throws UseCaseException {
         Appointment appointment = appointmentRepository.findAppointmentById(Validate.notBlank(appointmentId));
+        if (appointment==null){
+            throw new UseCaseException("appointment id not found");
+        }
         Patient patient = patientRepository.findPatientById(Validate.notNull(appointment.getPatientId()));
         Doctor doctor = doctorRepository.findDoctorById(Validate.notNull(appointment.getDoctorId()));
         List<Treatment> treatment = treatmentRepository.findTreatmentsByIds(Validate.notNull(appointment.getTreatmentIds()));
-        if (ObjectUtils.anyNull(appointment,patient,doctor) || ObjectUtils.anyNull(treatment)) {
+        if (ObjectUtils.anyNull(patient,doctor) || ObjectUtils.anyNull(treatment)) {
             throw new UseCaseException("id not found");
         }
         List<String> treatmentNames = treatment.stream().map(Treatment::getTreatmentName).collect(Collectors.toList());
