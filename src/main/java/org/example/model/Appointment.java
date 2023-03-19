@@ -13,7 +13,6 @@ public class Appointment {
     private LocalDateTime appointmentDateTime;
     private final String doctorId;                                  // declared final because it's unique non-changable identifier
     private final String patientId;                                 // declared final because it's unique non-changable identifier
-
     private final List<String> treatmentIds;
 
     public Appointment(String appointmentId, LocalDateTime appointmentDateTime, String doctorId, String patientId, List<String> treatmentIds) {

@@ -8,7 +8,6 @@ import org.example.repository.AppointmentRepository;
 import org.example.repository.DoctorRepository;
 import org.example.repository.PatientRepository;
 import org.example.repository.TreatmentRepository;
-
 import org.example.usecases.exception.UseCaseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,9 +17,8 @@ import org.mockito.MockedConstruction;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.Mockito;
 import static org.mockito.Mockito.*;
-
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,22 +29,26 @@ public class CreateAppointmentTest {
     private DoctorRepository doctorRepository;
     private PatientRepository patientRepository;
     private TreatmentRepository treatmentRepository;
+    private Doctor doctor;
+    private Patient patient;
     private CreateAppointment createAppointment;                                                                        // System Under Test (SUT)
-    private final LocalDateTime APPOINTMENTDATETIME = LocalDateTime.parse("2023-06-08 15:30",CUSTOM_FORMATTER);
-    List<String> TREATMENTIDS = new ArrayList<>(2);
-
-    private final static DateTimeFormatter CUSTOM_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private final LocalDateTime APPOINTMENTDATETIME = LocalDateTime.of(2023, Month.JUNE,30,15,30);
+    private List<Treatment> TREATMENTS = new ArrayList<>(2);
+    private List<String> TREATMENTIDS = new ArrayList<>(2);
 
     @BeforeEach
     public void SetUp() {
-        this.appointmentRepository = Mockito.mock(AppointmentRepository.class);
-        this.doctorRepository = Mockito.mock(DoctorRepository.class);
-        this.patientRepository = Mockito.mock(PatientRepository.class);
-        this.treatmentRepository = Mockito.mock(TreatmentRepository.class);
+        this.appointmentRepository = mock(AppointmentRepository.class);
+        this.doctorRepository = mock(DoctorRepository.class);
+        this.patientRepository = mock(PatientRepository.class);
+        this.treatmentRepository = mock(TreatmentRepository.class);
+        this.doctor = mock(Doctor.class);
+        this.patient = mock(Patient.class);
         this.createAppointment = getSut();
         TREATMENTIDS.add("3001");
         TREATMENTIDS.add("3002");
-
+        TREATMENTS.add(new Treatment("treatmentid1","treatmentname1","treatmenttype1"));
+        TREATMENTS.add(new Treatment("treatmentid2","treatmentname2","treatmenttype2"));
     }
 
     private CreateAppointment getSut() {                                                                                        // SUT: System Under Test
@@ -68,12 +70,9 @@ public class CreateAppointmentTest {
 
     @Test
     public void executeThrowsExceptionForNullObjects(){
-        Doctor doctor = mock(Doctor.class);
-        Patient patient = mock(Patient.class);
-        List<Treatment> treatments = new ArrayList<>(2);
         when(doctorRepository.findDoctorById("doctorid")).thenReturn(null);
         when(patientRepository.findPatientById("patientid")).thenReturn(patient);
-        when(treatmentRepository.findTreatmentsByIds(TREATMENTIDS)).thenReturn(treatments);
+        when(treatmentRepository.findTreatmentsByIds(TREATMENTIDS)).thenReturn(TREATMENTS);
         assertThrows(UseCaseException.class,
                 ()->{createAppointment.execute(APPOINTMENTDATETIME,"patientid","doctorid",TREATMENTIDS);}
         );
@@ -95,13 +94,9 @@ public class CreateAppointmentTest {
     }
     @Test
     public void executeGetsTreatments(){
-        when(treatmentRepository.findTreatmentsByIds(new ArrayList<String>(3))).thenReturn(new ArrayList<Treatment>(3));
-        List<Treatment> treatmentsMock = treatmentRepository.findTreatmentsByIds(new ArrayList<String>(3));
-        List<Treatment> treatments = new ArrayList<>(3);
-        treatments.add(new Treatment("treatmentid1","treatmentname1","treatmenttype1"));
-        treatments.add(new Treatment("treatmentid2","treatmentname2","treatmenttype2"));
-        treatments.add(new Treatment("treatmentid3","treatmentname3","treatmenttype3"));
-        assertEquals(treatments.getClass(),treatmentsMock.getClass());
+        when(treatmentRepository.findTreatmentsByIds(new ArrayList<String>(2))).thenReturn(new ArrayList<Treatment>(2));
+        List<Treatment> treatmentsMock = treatmentRepository.findTreatmentsByIds(new ArrayList<String>(2));
+        assertEquals(TREATMENTS.getClass(),treatmentsMock.getClass());
     }
 
     @Test
@@ -123,21 +118,16 @@ public class CreateAppointmentTest {
 
     @Test
     public void executeReturnsExpectedValue() throws UseCaseException {
-        Doctor doctor = mock(Doctor.class);
-        Patient patient = mock(Patient.class);
-        List<Treatment> treatments = new ArrayList<>(2);
-
         when(doctorRepository.findDoctorById("doctorid")).thenReturn(doctor);
         when(patientRepository.findPatientById("patientid")).thenReturn(patient);
-        when(treatmentRepository.findTreatmentsByIds(TREATMENTIDS)).thenReturn(treatments);
+        when(treatmentRepository.findTreatmentsByIds(TREATMENTIDS)).thenReturn(new ArrayList<Treatment>(2));
 
         try(MockedConstruction<Appointment> appointmentMock = Mockito.mockConstruction(Appointment.class,
             (mock,context) -> {
                 when(mock.getAppointmentId()).thenReturn("appointmentid");
                 when(mock.getAppointmentDateTime()).thenReturn(APPOINTMENTDATETIME);
         })){
-//            Appointment appointment = appointmentMock.constructed().get(0);
-            assertEquals(List.of("appointmentid","2023-06-08 15:30"),createAppointment.execute(APPOINTMENTDATETIME,"patientid","doctorid",TREATMENTIDS));
+            assertEquals(List.of("appointmentid","2023-06-30 15:30"),createAppointment.execute(APPOINTMENTDATETIME,"patientid","doctorid",TREATMENTIDS));
         }
     }
 
