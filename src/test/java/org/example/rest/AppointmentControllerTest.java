@@ -129,7 +129,6 @@ public class AppointmentControllerTest {
             when(appointment.getAppointmentDateTime()).thenReturn(APPOINTMENTDATETIME);
             when(appointment.getAppointmentId()).thenReturn("1");
             doReturn(new ArrayList<>(List.of("patientName", "patientCondition", "doctorName", "0010", "0011", "appointmentId", "appointmentDateTime"))).when(getAppointmentSpy).execute("1");
-//            doReturn(new ArrayList<>(List.of("patientName", "patientCondition", "doctorName", "0010", "0011", "appointmentId", "appointmentDateTime"))).when(getAppointmentSpy).execute("1");
             mockMvc.perform(get("/appointments/{id}", "1"))
                     .andDo(print())
                     .andExpect(status().isFound())
