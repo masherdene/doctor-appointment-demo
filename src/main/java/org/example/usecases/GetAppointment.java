@@ -3,8 +3,7 @@ package org.example.usecases;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Validate;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.example.model.Appointment;
@@ -58,7 +57,10 @@ public class GetAppointment {
         if (ObjectUtils.anyNull(patient,doctor) || ObjectUtils.anyNull(treatment)) {
             throw new UseCaseException("id not found");
         }
-        List<String> treatmentNames = treatment.stream().map(Treatment::getTreatmentName).collect(Collectors.toList());
-        return Stream.concat(List.of(patient.getPatientName(),patient.getPatientCondition(),doctor.getDoctorName()).stream(),treatmentNames.stream()).collect(Collectors.toList());
+        List<String> details = new LinkedList<>(Arrays.asList(patient.getPatientName(), patient.getPatientCondition(), doctor.getDoctorName()));
+        details.addAll(treatment.stream().map(Treatment::getTreatmentName).toList());
+        return Collections.unmodifiableList(details);
+//        List<String> treatmentNames = treatment.stream().map(Treatment::getTreatmentName).collect(Collectors.toList());
+//        return Stream.concat(List.of(patient.getPatientName(),patient.getPatientCondition(),doctor.getDoctorName()).stream(),treatmentNames.stream()).collect(Collectors.toList());
     }
 }

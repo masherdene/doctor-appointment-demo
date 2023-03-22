@@ -106,7 +106,7 @@ public class AppointmentControllerTest {
         verify(createAppointment,times(1)).existsCheck("80001","1002",new ArrayList<>(List.of("0010","0011")));
     }*/
 
-    // TEST 1: It appears that existsCheck() inside execute() is called: (1) temporarily comment out existsCheck() in execute() or (2) use JUnit4 with PowerMock to mock the private method or (3) refactor the private method into a class implementing an interface that will be injected into 'CreateAppointment'
+    // TEST 1: It appears that existsCheck() inside execute() is called: (1) temporarily comment out existsCheck() in execute() or (2) use JUnit4 with PowerMock to mock the private method or (3) inject 'CreateAppointment' to 'AppointmentController' via DI or (4) refactor the private method into a class implementing an interface that will be injected into 'CreateAppointment'
     @Test
     public void postAppointmentTest() throws Exception {
         when(createAppointment.execute(APPOINTMENTDATETIME,"patientid","doctorid", new ArrayList<>(List.of("0010","0011")))).thenReturn(List.of("1", APPOINTMENTDATETIME.format(CUSTOM_FORMATTER)));
@@ -119,7 +119,7 @@ public class AppointmentControllerTest {
                 .andExpect(jsonPath("[1]").value(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(APPOINTMENTDATETIME)));
     }
 
-    // TEST 2: It appears that existsCheckAndGetDetails() inside execute() is called: (1) temporarily comment out List<String> returnValues and replace it with "List<String> returnValues = new ArrayList<>(List.of("patientName", "patientCondition", "doctorName", "0010", "0011"));" or (2) use JUnit4 with PowerMock to mock the private method or (3) refactor the private method into a class implementing an interface that will be injected into 'GetAppointment'
+    // TEST 2: It appears that existsCheckAndGetDetails() inside execute() is called: (1) temporarily comment out List<String> returnValues and replace it with "List<String> returnValues = new ArrayList<>(List.of("patientName", "patientCondition", "doctorName", "0010", "0011"));" or (2) use JUnit4 with PowerMock to mock the private method or (3) inject 'GetAppointment' to 'AppointmentController' via DI or (4) refactor the private method into a class implementing an interface that will be injected into 'GetAppointment'
     @Test
     public void getAppointmentTest() throws Exception {
         try(MockedConstruction<Appointment> appointmentMock = Mockito.mockConstruction(Appointment.class)) {
@@ -129,6 +129,7 @@ public class AppointmentControllerTest {
             when(appointment.getAppointmentDateTime()).thenReturn(APPOINTMENTDATETIME);
             when(appointment.getAppointmentId()).thenReturn("1");
             doReturn(new ArrayList<>(List.of("patientName", "patientCondition", "doctorName", "0010", "0011", "appointmentId", "appointmentDateTime"))).when(getAppointmentSpy).execute("1");
+//            doReturn(new ArrayList<>(List.of("patientName", "patientCondition", "doctorName", "0010", "0011", "appointmentId", "appointmentDateTime"))).when(getAppointmentSpy).execute("1");
             mockMvc.perform(get("/appointments/{id}", "1"))
                     .andDo(print())
                     .andExpect(status().isFound())
