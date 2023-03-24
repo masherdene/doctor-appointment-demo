@@ -61,8 +61,9 @@ public class CreateAppointmentTest {
                 = new CreateAppointment(null, null, null, null);});
     }
 
+    // Testing validation and existence checking of passed-in arguments
     @Test
-    public void executeThrowsException(){
+    public void executeThrowsUseCaseExceptionForNonExistingObjects(){
         assertThrows(UseCaseException.class,
                 ()->{createAppointment.execute(APPOINTMENTDATETIME,"patientid" ,"doctorId", new ArrayList<>(3));}          // will create null instances for mocked objects
         );
@@ -109,7 +110,7 @@ public class CreateAppointmentTest {
     }
 
     @Test
-    public void executeInvokesAddsAppointment(){
+    public void executeInvokesAddsAppointmentMethod(){
         Appointment appointment = new Appointment("appointmentid", APPOINTMENTDATETIME,"doctorid","patientid",TREATMENTIDS);
         doNothing().when(appointmentRepository).addAppointment(appointment);
         appointmentRepository.addAppointment(appointment);
