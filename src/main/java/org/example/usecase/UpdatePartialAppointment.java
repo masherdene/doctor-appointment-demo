@@ -1,11 +1,11 @@
-package org.example.usecases;
+package org.example.usecase;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.example.model.Appointment;
 import org.example.repository.AppointmentRepository;
-import org.example.usecases.exception.UseCaseException;
+import org.example.usecase.exception.UseCaseException;
 import static org.example.rest.AppointmentController.CUSTOM_FORMATTER;
 
 

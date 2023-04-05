@@ -1,8 +1,8 @@
 package org.example.rest;
 
 import org.example.repository.*;
-import org.example.usecases.*;
-import org.example.usecases.exception.UseCaseException;
+import org.example.usecase.*;
+import org.example.usecase.exception.UseCaseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

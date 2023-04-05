@@ -1,11 +1,10 @@
-package org.example.usecases;
+package org.example.usecase;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Validate;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 import org.example.model.Appointment;
 import org.example.model.Doctor;
 import org.example.model.Patient;
@@ -14,7 +13,7 @@ import org.example.repository.AppointmentRepository;
 import org.example.repository.DoctorRepository;
 import org.example.repository.PatientRepository;
 import org.example.repository.TreatmentRepository;
-import org.example.usecases.exception.UseCaseException;
+import org.example.usecase.exception.UseCaseException;
 import static org.example.rest.AppointmentController.CUSTOM_FORMATTER;
 
 public class GetAppointment {

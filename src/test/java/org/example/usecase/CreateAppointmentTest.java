@@ -1,4 +1,4 @@
-package org.example.usecases;
+package org.example.usecase;
 
 import org.example.model.Appointment;
 import org.example.model.Doctor;
@@ -8,11 +8,16 @@ import org.example.repository.AppointmentRepository;
 import org.example.repository.DoctorRepository;
 import org.example.repository.PatientRepository;
 import org.example.repository.TreatmentRepository;
-import org.example.usecases.exception.UseCaseException;
+import org.example.usecase.exception.UseCaseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.NullSource;
 import org.mockito.MockedConstruction;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.Mockito;
@@ -21,6 +26,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -55,6 +61,13 @@ public class CreateAppointmentTest {
         return new CreateAppointment(appointmentRepository, doctorRepository, patientRepository, treatmentRepository);
     }
 
+    @ParameterizedTest
+    @NullSource
+    public void constructorThrowsExceptionIfFirstArgNull(AppointmentRepository input) {
+        assertThrows(NullPointerException.class,()-> {CreateAppointment createAppointment
+                = new CreateAppointment(input, doctorRepository, patientRepository, treatmentRepository);});
+    }
+
     @Test
     public void constructorThrowsExceptionForNullArgs() {
             assertThrows(NullPointerException.class,()-> {CreateAppointment createAppointment
@@ -65,17 +78,38 @@ public class CreateAppointmentTest {
     @Test
     public void executeThrowsUseCaseExceptionForNonExistingObjects(){
         assertThrows(UseCaseException.class,
-                ()->{createAppointment.execute(APPOINTMENTDATETIME,"patientid" ,"doctorId", new ArrayList<>(3));}          // will create null instances for mocked objects
+                ()->{createAppointment.execute(APPOINTMENTDATETIME,"patientid" ,"doctorId", new ArrayList<>(3));}
         );
     }
 
-    @Test
-    public void executeThrowsExceptionForNullObjects(){
-        when(doctorRepository.findDoctorById("doctorid")).thenReturn(null);
+    @ParameterizedTest
+    @CsvSource(value = {"null, null", "null, null"}, nullValues = {"null"})
+    public void executeThrowsExceptionForNullObjects(Doctor doctor, Patient patient){
+        when(doctorRepository.findDoctorById("doctorid")).thenReturn(doctor);
         when(patientRepository.findPatientById("patientid")).thenReturn(patient);
         when(treatmentRepository.findTreatmentsByIds(TREATMENTIDS)).thenReturn(TREATMENTS);
         assertThrows(UseCaseException.class,
                 ()->{createAppointment.execute(APPOINTMENTDATETIME,"patientid","doctorid",TREATMENTIDS);}
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideObjectsForTest")
+    public void executeThrowsExceptionIfOneObjectIsNull(Doctor doctor, Patient patient){
+        when(doctorRepository.findDoctorById("doctorid")).thenReturn(doctor);
+        when(patientRepository.findPatientById("patientid")).thenReturn(patient);
+        when(treatmentRepository.findTreatmentsByIds(TREATMENTIDS)).thenReturn(TREATMENTS);
+        assertThrows(UseCaseException.class,
+                ()->{createAppointment.execute(APPOINTMENTDATETIME,"patientid","doctorid",TREATMENTIDS);}
+        );
+    }
+
+    private static Stream<Arguments> provideObjectsForTest(){
+        Doctor doctor = mock(Doctor.class);
+        Patient patient = mock(Patient.class);
+        return Stream.of(
+                Arguments.of(doctor, null),
+                Arguments.of(null, patient)
         );
     }
 
@@ -86,6 +120,7 @@ public class CreateAppointmentTest {
         Doctor doctor = new Doctor("doctorid","doctorname","doctorspecial");
         assertEquals(doctor.getClass(),doctorMock.getClass());
     }
+
     @Test
     public void executeGetsPatient(){
         when(patientRepository.findPatientById("patientid")).thenReturn(mock(Patient.class));
@@ -93,6 +128,7 @@ public class CreateAppointmentTest {
         Patient patient = new Patient("patientid","patientname","patientcondition");
         assertEquals(patient.getClass(),patientMock.getClass());
     }
+
     @Test
     public void executeGetsTreatments(){
         when(treatmentRepository.findTreatmentsByIds(new ArrayList<String>(2))).thenReturn(new ArrayList<Treatment>(2));
@@ -131,5 +167,4 @@ public class CreateAppointmentTest {
             assertEquals(List.of("appointmentid","2023-06-30 15:30"),createAppointment.execute(APPOINTMENTDATETIME,"patientid","doctorid",TREATMENTIDS));
         }
     }
-
 }
