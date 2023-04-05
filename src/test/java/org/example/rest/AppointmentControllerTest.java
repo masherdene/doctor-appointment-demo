@@ -109,8 +109,8 @@ public class AppointmentControllerTest {
     // TEST 1: It appears that existsCheck() inside execute() is called: (1) temporarily comment out existsCheck() in execute() or (2) use JUnit4 with PowerMock to mock the private method or (3) inject 'CreateAppointment' to 'AppointmentController' via DI or (4) refactor the private method into a class implementing an interface that will be injected into 'CreateAppointment'
     @Test
     public void postAppointmentTest() throws Exception {
-        when(createAppointment.execute(APPOINTMENTDATETIME,"patientid","doctorid", new ArrayList<>(List.of("0010","0011")))).thenReturn(List.of("1", APPOINTMENTDATETIME.format(CUSTOM_FORMATTER)));
-        String appointmentRestDto = objectMapper.writeValueAsString(new AppointmentRestDto("1","patientid","periodontitis","doctorid","periodontitis",new ArrayList<>(List.of("0010","0011")), APPOINTMENTDATETIME));
+        when(createAppointment.execute(APPOINTMENTDATETIME,"patientId","doctorId", new ArrayList<>(List.of("0010","0011")))).thenReturn(List.of("1", APPOINTMENTDATETIME.format(CUSTOM_FORMATTER)));
+        String appointmentRestDto = objectMapper.writeValueAsString(new AppointmentRestDto("1","patientId","periodontitis","doctorId","periodontitis",new ArrayList<>(List.of("0010","0011")), APPOINTMENTDATETIME));
         mockMvc.perform(post("/appointments").accept(MediaType.APPLICATION_JSON).characterEncoding("utf-8").contentType(MediaType.APPLICATION_JSON).content(appointmentRestDto))
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -124,7 +124,7 @@ public class AppointmentControllerTest {
     public void getAppointmentTest() throws Exception {
         try(MockedConstruction<Appointment> appointmentMock = Mockito.mockConstruction(Appointment.class)) {
             // From now on, every object creation for 'Appointment' will return a mock within the try-with-resources block
-            Appointment appointment = new Appointment("1", APPOINTMENTDATETIME, "doctorid", "patientid", List.of("0010", "0011"));      // assertEquals(1,appointmentMock.constructed().size());
+            Appointment appointment = new Appointment("1", APPOINTMENTDATETIME, "doctorId", "patientId", List.of("0010", "0011"));      // assertEquals(1,appointmentMock.constructed().size());
             when(appointmentRepository.findAppointmentById("1")).thenReturn(appointment);
             when(appointment.getAppointmentDateTime()).thenReturn(APPOINTMENTDATETIME);
             when(appointment.getAppointmentId()).thenReturn("1");
